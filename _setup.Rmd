@@ -1,0 +1,16 @@
+---
+title: "_setup.Rmd"
+output: html_document
+---
+
+Load data and packages
+
+```{r, setup, message=FALSE, include = FALSE}
+
+#Load packages
+fht::lib_fht()
+
+#Read in data
+data<- readr::read_rds("clean_data.rds")
+
+```

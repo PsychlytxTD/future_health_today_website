@@ -1,0 +1,54 @@
+---
+title: "Chi-Squared Goodness Of Fit"
+output: html_document
+---
+
+```{r, child="_setup.Rmd"}
+```
+
+```{r, echo = FALSE}
+data<- data %>% 
+dplyr::select(sig_change_self_efficacy, pain_source) %>%
+tidyr::drop_na() %>% 
+dplyr::mutate(dplyr::across(everything(), as.factor))
+```
+
+# Generate Statistic
+
+```{r}
+(observed_indep_statistic<- data %>% 
+  infer::specify(sig_change_self_efficacy ~ pain_source) %>% 
+  infer::calculate(stat = "Chisq"))
+
+```
+
+# Simulate Null Distribution
+
+```{r}
+null_distribution_simulated<- data %>% 
+  infer::specify(sig_change_self_efficacy ~ pain_source) %>% 
+  infer::hypothesize(null = "independence") %>% 
+  infer::generate(reps = 5000, type = "permute") %>% 
+  infer::calculate(stat = "Chisq")
+```
+
+# Visualise
+
+```{r}
+null_distribution_simulated %>% 
+  infer::visualize(method = "both") +
+  infer::shade_p_value(observed_indep_statistic,
+                       direction = "greater")
+```
+
+# P-Value
+
+```{r}
+
+(p_value_independence<- null_distribution_simulated %>% 
+  infer::get_p_value(obs_stat = observed_indep_statistic,
+                     direction = "greater")) 
+```
+
+```{r, child="_session_info.Rmd"}
+```

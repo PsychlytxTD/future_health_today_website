@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Multiple Linear Regression</title>
+
+<script src="site_libs/jquery-1.12.4/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<script src="site_libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="site_libs/datatables-binding-0.13/datatables.js"></script>
+<link href="site_libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="site_libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="site_libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="site_libs/dt-ext-fixedcolumns-1.10.20/css/fixedColumns.dataTables.min.css" rel="stylesheet" />
+<script src="site_libs/dt-ext-fixedcolumns-1.10.20/js/dataTables.fixedColumns.min.js"></script>
+<link href="site_libs/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #ffffff;
+    color: #a0a0a0;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
+div.sourceCode
+  { color: #1f1c1b; background-color: #ffffff; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span. { color: #1f1c1b; } /* Normal */
+code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
+code span.an { color: #ca60ca; } /* Annotation */
+code span.at { color: #0057ae; } /* Attribute */
+code span.bn { color: #b08000; } /* BaseN */
+code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #924c9d; } /* Char */
+code span.cn { color: #aa5500; } /* Constant */
+code span.co { color: #898887; } /* Comment */
+code span.cv { color: #0095ff; } /* CommentVar */
+code span.do { color: #607880; } /* Documentation */
+code span.dt { color: #0057ae; } /* DataType */
+code span.dv { color: #b08000; } /* DecVal */
+code span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code span.fl { color: #b08000; } /* Float */
+code span.fu { color: #644a9b; } /* Function */
+code span.im { color: #ff5500; } /* Import */
+code span.in { color: #b08000; } /* Information */
+code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code span.op { color: #1f1c1b; } /* Operator */
+code span.ot { color: #006e28; } /* Other */
+code span.pp { color: #006e28; } /* Preprocessor */
+code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #ff5500; } /* SpecialString */
+code span.st { color: #bf0303; } /* String */
+code span.va { color: #0057ae; } /* Variable */
+code span.vs { color: #bf0303; } /* VerbatimString */
+code span.wa { color: #bf0303; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Future Health Today</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Data Management
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Explore Categorical Variables</li>
+    <li>
+      <a href="plot_simple_counts.html">Plot Simple Counts For One Variable</a>
+    </li>
+    <li>
+      <a href="plot_simple_counts_all.html">Plot Simple Counts For All Variables Instantaneously</a>
+    </li>
+    <li>
+      <a href="plot_crosstabulations.html">Plot Crosstabulations For One Pair Of Variables</a>
+    </li>
+    <li>
+      <a href="plot_crosstabulations_all.html">Plot Crosstabulations For All Categorical Variables Against One</a>
+    </li>
+    <li>
+      <a href="chi_squared.html">Chi-Squared</a>
+    </li>
+    <li class="dropdown-header">Pre-Modelling Correlation Analysis</li>
+    <li>
+      <a href="plot_correlation_all.html">Get All Correlations With A Target Variable Instantaneously</a>
+    </li>
+    <li>
+      <a href="get_all_pairwise_correlations.html">Get All Pairwise Correlations</a>
+    </li>
+    <li>
+      <a href="plot_correlogram.html">Plot Correlogram</a>
+    </li>
+    <li>
+      <a href="calc_corr_group.html">Get Correlations By Group</a>
+    </li>
+    <li>
+      <a href="linear_regression.html">Modern Multiple Linear Regression Workflow</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/PsychlytxTD">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://www.linkedin.com/in/timothy-deitz-52a241193/">
+    <span class="fa fa-linkedin"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://wwwtimothydeitz.com">
+    <span class="fa fa-tablet-alt"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://wwwtimothydeitz.com">
+    <span class="fa fa-chart-line"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Multiple Linear Regression</h1>
+
+</div>
+
+
+<div id="initial-data-split" class="section level1">
+<h1>Initial Data Split</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">(efficacy_split&lt;-<span class="st"> </span>rsample<span class="op">::</span><span class="kw">initial_split</span>(efficacy_tbl, <span class="dt">prop =</span> <span class="dv">3</span><span class="op">/</span><span class="dv">4</span>))</a></code></pre></div>
+<pre><code>## &lt;Training/Validation/Total&gt;
+## &lt;208/69/277&gt;</code></pre>
+</div>
+<div id="allocate-training-testing-data" class="section level1">
+<h1>Allocate Training &amp; Testing Data</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">efficacy_train_tbl&lt;-<span class="st"> </span>efficacy_split <span class="op">%&gt;%</span><span class="st"> </span>rsample<span class="op">::</span><span class="kw">training</span>()</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">efficacy_test_tbl&lt;-<span class="st"> </span>efficacy_split <span class="op">%&gt;%</span><span class="st"> </span>rsample<span class="op">::</span><span class="kw">testing</span>()</a></code></pre></div>
+</div>
+<div id="define-recipe" class="section level1">
+<h1>Define Recipe</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">efficacy_recipe&lt;-<span class="st"> </span>recipes<span class="op">::</span><span class="kw">recipe</span>(end_pseq_total <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> efficacy_tbl) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="st">  </span>recipes<span class="op">::</span><span class="kw">step_dummy</span>(recipes<span class="op">::</span><span class="kw">all_nominal</span>()) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="st">  </span>recipes<span class="op">::</span><span class="kw">step_knnimpute</span>(recipes<span class="op">::</span><span class="kw">all_predictors</span>())</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#View recipe</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="kw">summary</span>(efficacy_recipe)</a></code></pre></div>
+<pre><code>## # A tibble: 15 x 4
+##    variable               type    role      source  
+##    &lt;chr&gt;                  &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;   
+##  1 ref_pcs_total          numeric predictor original
+##  2 ref_pseq_total         numeric predictor original
+##  3 ref_bpi_pain_severity  numeric predictor original
+##  4 ref_bpi_sleep          numeric predictor original
+##  5 ref_bpi_walking        numeric predictor original
+##  6 ref_dass_depression    numeric predictor original
+##  7 ref_dass_anxiety       numeric predictor original
+##  8 ref_dass_stress        numeric predictor original
+##  9 ref_daily_morphine     numeric predictor original
+## 10 wait_time              numeric predictor original
+## 11 age                    numeric predictor original
+## 12 pain_source            nominal predictor original
+## 13 service_frequency_pain numeric predictor original
+## 14 compensation_case      numeric predictor original
+## 15 end_pseq_total         numeric outcome   original</code></pre>
+</div>
+<div id="view-pre-processed-data" class="section level1">
+<h1>View Pre-Processed Data</h1>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">efficacy_preprocessed&lt;-<span class="st"> </span>efficacy_recipe <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span>recipes<span class="op">::</span><span class="kw">prep</span>(efficacy_train_tbl) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="st">  </span>recipes<span class="op">::</span><span class="kw">juice</span>()</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#Look</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6">efficacy_preprocessed <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">glimpse</span>()</a></code></pre></div>
+<pre><code>## Rows: 208
+## Columns: 22
+## Rowwise: 
+## $ ref_pcs_total                                   &lt;dbl&gt; 32.00000, 6.00000, 15…
+## $ ref_pseq_total                                  &lt;dbl&gt; 41.0, 32.0, 16.0, 29.…
+## $ ref_bpi_pain_severity                           &lt;dbl&gt; 4.00, 2.00, 8.50, 2.2…
+## $ ref_bpi_sleep                                   &lt;dbl&gt; 8.0, 5.0, 10.0, 3.0, …
+## $ ref_bpi_walking                                 &lt;dbl&gt; 2.0, 5.0, 8.0, 1.0, 6…
+## $ ref_dass_depression                             &lt;dbl&gt; 6.0, 0.0, 20.0, 8.0, …
+## $ ref_dass_anxiety                                &lt;dbl&gt; 10, 0, 2, 0, 0, 10, 4…
+## $ ref_dass_stress                                 &lt;dbl&gt; 18.0000, 6.0000, 14.0…
+## $ ref_daily_morphine                              &lt;dbl&gt; 0, 8, 25, 0, 15, 20, …
+## $ wait_time                                       &lt;dbl&gt; 75, 17, 202, 94, 60, …
+## $ age                                             &lt;dbl&gt; 33.56, 44.63, 64.79, …
+## $ service_frequency_pain                          &lt;dbl&gt; 10, 6, 3, 3, 13, 46, …
+## $ compensation_case                               &lt;int&gt; 0, 0, 1, 0, 0, 1, 0, …
+## $ end_pseq_total                                  &lt;dbl&gt; 45.0000, 39.0000, 17.…
+## $ pain_source_No.obvious.cause                    &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, …
+## $ pain_source_After.surgery                       &lt;dbl&gt; 0, 1, 0, 0, 0, 0, 0, …
+## $ pain_source_Injury.at.work.school               &lt;dbl&gt; 0.0, 0.0, 1.0, 0.0, 0…
+## $ pain_source_Other.cause                         &lt;dbl&gt; 0, 0, 0, 1, 1, 0, 1, …
+## $ pain_source_Injury.in.another.setting           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, …
+## $ pain_source_Injury.at.home                      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, …
+## $ pain_source_Cancer                              &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, …
+## $ pain_source_Medical.condition.other.than.cancer &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, …</code></pre>
+</div>
+<div id="remove-all-pain-source-variables-except-one" class="section level1">
+<h1>Remove All Pain Source Variables Except One</h1>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">efficacy_recipe&lt;-<span class="st"> </span>efficacy_recipe <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span>recipes<span class="op">::</span><span class="kw">step_rm</span>(tidyselect<span class="op">::</span><span class="kw">contains</span>(<span class="st">&quot;pain_source&quot;</span>), <span class="op">-</span><span class="kw">contains</span>(<span class="st">&quot;work.school&quot;</span>))</a></code></pre></div>
+</div>
+<div id="prepare-the-recipe-estimate-means" class="section level1">
+<h1>Prepare the Recipe (Estimate Means)</h1>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">efficacy_prepped&lt;-<span class="st"> </span>efficacy_recipe <span class="op">%&gt;%</span><span class="st"> </span>recipes<span class="op">::</span><span class="kw">prep</span>(<span class="dt">data =</span> efficacy_train_tbl)</a></code></pre></div>
+<pre><code>## Warning: There are new levels in a factor: NA</code></pre>
+</div>
+<div id="apply-the-preproessing-steps-to-the-model" class="section level1">
+<h1>Apply the Preproessing Steps to the Model</h1>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">train_baked&lt;-<span class="st"> </span>recipes<span class="op">::</span><span class="kw">bake</span>(efficacy_prepped, <span class="dt">new_data =</span> efficacy_train_tbl)</a></code></pre></div>
+<pre><code>## Warning: There are new levels in a factor: NA</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">test_baked&lt;-<span class="st"> </span>recipes<span class="op">::</span><span class="kw">bake</span>(efficacy_prepped, <span class="dt">new_data =</span> efficacy_test_tbl)</a></code></pre></div>
+<pre><code>## Warning: There are new levels in a factor: NA</code></pre>
+</div>
+<div id="fit-the-model-to-training-data" class="section level1">
+<h1>Fit the Model to <strong>Training</strong> Data</h1>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">lr_model&lt;-<span class="st"> </span>parsnip<span class="op">::</span><span class="kw">linear_reg</span>(<span class="dt">mode =</span> <span class="st">&quot;regression&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span>parsnip<span class="op">::</span><span class="kw">set_engine</span>(<span class="st">&quot;lm&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">  </span>parsnip<span class="op">::</span><span class="kw">fit</span>(end_pseq_total <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> train_baked)</a></code></pre></div>
+</div>
+<div id="calculate-predictions-using-test-data" class="section level1">
+<h1>Calculate Predictions Using <strong>Test</strong> Data</h1>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"> pred&lt;-<span class="st"> </span>lr_model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="st">  </span>stats<span class="op">::</span><span class="kw">predict</span>(<span class="dt">new_data =</span> test_baked) </a></code></pre></div>
+</div>
+<div id="calculate-cis-around-predictions-using-new-data" class="section level1">
+<h1>Calculate CIs Around Predictions Using New Data</h1>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"> conf_int_pred&lt;-<span class="st"> </span>lr_model <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="st">  </span>stats<span class="op">::</span><span class="kw">predict</span>(<span class="dt">new_data =</span> test_baked, <span class="dt">type =</span> <span class="st">&quot;conf_int&quot;</span>) </a></code></pre></div>
+</div>
+<div id="combine-test-data-set-with-model-predictions-cis" class="section level1">
+<h1>Combine Test Data Set with Model Predictions &amp; CIs</h1>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">lm_predictions&lt;-<span class="st"> </span>test_baked <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">bind_cols</span>(pred) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">bind_cols</span>(conf_int_pred)</a>
+<a class="sourceLine" id="cb18-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb18-5" data-line-number="5"><span class="co">#View Actual, Predicted &amp; CIs</span></a>
+<a class="sourceLine" id="cb18-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb18-7" data-line-number="7">lm_predictions <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">select</span>(end_pseq_total, .pred, .pred_lower, .pred_upper)</a></code></pre></div>
+<pre><code>## # A tibble: 69 x 4
+##    end_pseq_total .pred .pred_lower .pred_upper
+##             &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;
+##  1             19  17.0        8.46        25.6
+##  2             37  18.4       13.8         23.1
+##  3             31  34.5       28.8         40.2
+##  4             10  15.6        9.58        21.7
+##  5             21  26.2       19.1         33.3
+##  6             26  17.1       12.5         21.7
+##  7             13  34.7       29.5         39.9
+##  8             27  34.1       29.1         39.2
+##  9             37  26.3       20.2         32.5
+## 10             36  39.9       34.5         45.3
+## # … with 59 more rows</code></pre>
+</div>
+<div id="plot-actual-vs.-predicted-values" class="section level1">
+<h1>Plot Actual Vs. Predicted Values</h1>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">ggplot</span>(lm_predictions, <span class="kw">aes</span>(<span class="dt">x =</span> .pred, <span class="dt">y =</span> end_pseq_total)) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> tidyquant<span class="op">::</span><span class="kw">palette_light</span>()[[<span class="dv">1</span>]]) <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">color =</span> tidyquant<span class="op">::</span><span class="kw">palette_light</span>()[[<span class="dv">3</span>]], <span class="dt">se =</span> <span class="ot">FALSE</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_errorbar</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> .pred_lower, </a>
+<a class="sourceLine" id="cb20-4" data-line-number="4">                    <span class="dt">ymax =</span> .pred_upper),<span class="dt">width =</span> <span class="fl">.2</span>, <span class="dt">color =</span> tidyquant<span class="op">::</span><span class="kw">palette_light</span>()[[<span class="dv">2</span>]]) <span class="op">+</span><span class="st"> </span>tidyquant<span class="op">::</span><span class="kw">theme_tq</span>() <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Pain Self-Efficacy - Actual&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Pain Self-Efficacy Predicted&quot;</span>)</a></code></pre></div>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: Removed 1 rows containing non-finite values (stat_smooth).</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_point).</code></pre>
+<p><img src="linear_regression_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+<div id="assess-model-performance" class="section level1">
+<h1>Assess Model Performance</h1>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">yardstick<span class="op">::</span><span class="kw">metrics</span>(lm_predictions, <span class="dt">truth =</span> end_pseq_total, <span class="dt">estimate =</span> .pred)</a></code></pre></div>
+<pre><code>## # A tibble: 3 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 rmse    standard      12.2  
+## 2 rsq     standard       0.354
+## 3 mae     standard       9.72</code></pre>
+</div>
+<div id="addendum-linear-regression-for-inference" class="section level1">
+<h1>Addendum: Linear Regression For Inference</h1>
+<div id="generate-data" class="section level2">
+<h2>Generate Data</h2>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">inf_tbl&lt;-<span class="st"> </span>data <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">select</span>(end_pseq_total, ref_pcs_total, ref_bpi_pain_severity, ref_daily_morphine, age, compensation_case) </a></code></pre></div>
+</div>
+<div id="apply-transformations-to-data-as-needed" class="section level2">
+<h2>Apply Transformations to Data As Needed</h2>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">inf_recipe&lt;-<span class="st"> </span>recipes<span class="op">::</span><span class="kw">recipe</span>(end_pseq_total <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> inf_tbl) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb27-2" data-line-number="2"><span class="st">  </span>recipes<span class="op">::</span><span class="kw">step_meanimpute</span>(recipes<span class="op">::</span><span class="kw">all_predictors</span>())</a></code></pre></div>
+</div>
+<div id="retrive-the-processed-data" class="section level2">
+<h2>Retrive the Processed Data</h2>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">inf_processed_tbl&lt;-<span class="st"> </span>inf_recipe <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb28-2" data-line-number="2"><span class="st">  </span>recipes<span class="op">::</span><span class="kw">prep</span>(inf_tbl) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="st">  </span>recipes<span class="op">::</span><span class="kw">juice</span>()</a></code></pre></div>
+</div>
+<div id="fit-the-model-to-data" class="section level2">
+<h2>Fit the Model to Data</h2>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">inf_model&lt;-<span class="st"> </span>parsnip<span class="op">::</span><span class="kw">linear_reg</span>(<span class="dt">mode =</span> <span class="st">&quot;regression&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb29-2" data-line-number="2"><span class="st">  </span>parsnip<span class="op">::</span><span class="kw">set_engine</span>(<span class="st">&quot;lm&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb29-3" data-line-number="3"><span class="st">  </span>parsnip<span class="op">::</span><span class="kw">fit</span>(end_pseq_total <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> inf_processed_tbl)</a></code></pre></div>
+</div>
+</div>
+<div id="detour-accessing-regression-results-for-inferential-analysis" class="section level1">
+<h1>Detour: Accessing Regression Results for Inferential Analysis</h1>
+<div id="view-model-parameter-estimates" class="section level4">
+<h4>View Model Parameter Estimates</h4>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1">inf_model<span class="op">$</span>fit <span class="op">%&gt;%</span><span class="st"> </span>broomExtra<span class="op">::</span><span class="kw">tidy_parameters</span>() <span class="op">%&gt;%</span><span class="st"> </span>fht<span class="op">::</span><span class="kw">dt_tab</span>()</a></code></pre></div>
+<div id="htmlwidget-0b784556b619b45aea29" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0b784556b619b45aea29">{"x":{"filter":"none","extensions":["FixedColumns"],"data":[["1","2","3","4","5","6"],["(Intercept)","ref_pcs_total","ref_bpi_pain_severity","ref_daily_morphine","age","compensation_case"],[56.9554147036645,-0.262444817627194,-2.28277056976555,-0.0596895568904501,-0.0221343031355701,-7.71009402742062],[4.02223738495209,0.0581584977008989,0.459424542123998,0.0197657489042873,0.0497006736192376,1.56255347135316],[49.0359417234359,-0.376954382089023,-3.18734180701196,-0.0986067811614759,-0.119991068949355,-10.7866404398326],[64.874887683893,-0.147935253165364,-1.37819933251915,-0.0207723326194243,0.075722462678215,-4.63354761500866],[14.1601325960384,-4.51257903835328,-4.96876061346639,-3.01984797942581,-0.445352175810402,-4.93429131787966],[266,266,266,266,266,266],[2.63730310893876e-34,9.62253654688258e-06,1.20755098619829e-06,0.00277492540481457,0.656427486382269,1.42015323387418e-06]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>term<\/th>\n      <th>estimate<\/th>\n      <th>std.error<\/th>\n      <th>conf.low<\/th>\n      <th>conf.high<\/th>\n      <th>statistic<\/th>\n      <th>df.error<\/th>\n      <th>p.value<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","scrollX":true,"fixedColumns":true,"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="plot-coefficients" class="section level2">
+<h2>Plot Coefficients</h2>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">ggstatsplot<span class="op">::</span><span class="kw">ggcoefstats</span>(inf_model<span class="op">$</span>fit)</a></code></pre></div>
+<pre><code>## New names:
+## * NA -&gt; ...1
+## * NA -&gt; ...2
+## * NA -&gt; ...3
+## * NA -&gt; ...4</code></pre>
+<p><img src="linear_regression_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<div id="view-performance-indices" class="section level4">
+<h4>View Performance Indices</h4>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">inf_model<span class="op">$</span>fit <span class="op">%&gt;%</span><span class="st"> </span>broomExtra<span class="op">::</span><span class="kw">glance_performance</span>() <span class="op">%&gt;%</span><span class="st"> </span>fht<span class="op">::</span><span class="kw">dt_tab</span>()</a></code></pre></div>
+<div id="htmlwidget-6332b39eaeea4632bb66" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6332b39eaeea4632bb66">{"x":{"filter":"none","extensions":["FixedColumns"],"data":[["1"],[0.338924866995384],[0.326498642690786],[11.7973324652001],[27.2749677365773],[2.92546315930305e-22],[6],[-1054.17927468103],[2122.35854936207],[2147.59916382614],[37021.0961763275],[266],[11.6664892421198]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>r.squared<\/th>\n      <th>adj.r.squared<\/th>\n      <th>sigma<\/th>\n      <th>statistic<\/th>\n      <th>p.value<\/th>\n      <th>df<\/th>\n      <th>loglik<\/th>\n      <th>aic<\/th>\n      <th>bic<\/th>\n      <th>deviance<\/th>\n      <th>df.residual<\/th>\n      <th>rmse<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","scrollX":true,"fixedColumns":true,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11,12]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="generate-key-statistics-to-assess-model-assumptions" class="section level4">
+<h4>Generate Key Statistics To Assess Model Assumptions</h4>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">inf_model<span class="op">$</span>fit <span class="op">%&gt;%</span><span class="st"> </span>broomExtra<span class="op">::</span><span class="kw">augment</span>() <span class="op">%&gt;%</span><span class="st"> </span>fht<span class="op">::</span><span class="kw">dt_tab</span>()</a></code></pre></div>
+<div id="htmlwidget-95e2e15047187540c8c4" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-95e2e15047187540c8c4">{"x":{"filter":"none","extensions":["FixedColumns"],"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127","128","129","130","131","132","133","134","135","136","137","138","139","140","141","142","143","144","145","146","147","148","149","150","151","152","153","154","155","156","157","158","159","160","161","162","163","164","165","166","167","168","169","170","171","172","173","174","175","176","177","178","179","180","181","182","183","184","185","186","187","188","189","190","191","192","193","194","195","196","197","198","199","200","201","202","203","204","205","206","207","208","209","210","211","212","213","214","215","216","217","218","219","220","221","222","223","224","225","226","227","228","229","230","231","232","233","234","235","236","237","238","239","240","241","242","243","244","245","246","247","248","249","250","251","252","253","254","255","256","257","258","259","260","261","262","263","264","265","266","267","268","269","270","271","272"],["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127","128","129","130","132","133","134","135","136","137","138","139","140","141","142","143","144","145","146","147","148","149","150","151","152","153","154","155","156","157","158","159","160","161","162","163","164","165","166","167","168","169","170","171","172","173","174","175","176","177","178","179","180","181","182","183","184","185","186","187","188","189","190","191","192","193","194","195","196","197","198","199","200","201","202","203","204","205","206","207","208","209","210","211","212","213","214","215","216","217","218","219","220","221","222","223","224","225","226","227","228","229","230","231","232","233","234","235","236","237","238","239","240","241","242","243","244","245","246","247","248","249","250","251","252","253","254","255","256","257","258","259","260","261","262","263","264","265","266","267","270","271","272","273","274","275","276","277"],[19,45,39,17,43,37,28,31,15,45,10,36,35,35,21,52,40,10,26,37,13,41,15,7,48,50,32.2222,27,10,53,5,19,37,22,56,36,42,25,18,32,49,6,17,29,6.6667,29,43,53,46,43,13,60,11,4,26,49,40,40,22,33,20,10,13,17,16,41,40,31,44,52,34,26,3,50,17,37,17,28,39,22,38,24,37,40,42,14,5,27,40,18,28,23,33,40,28.8889,8,56,36,30,25,28,58,14,35,35,52,14,7,28,3,28,23,28,58,45,34,37,25,12,28,12,40,28,17,33,0,18.8889,26,10,24,23,28,46,35,53,41,41,34,30,49,35,15,45,28,60,34,45,39,54,23,43,36,17,20,44,40,33,34,51,15,35,60,42,8,2,14,16,15,23,10,30,18,3,29,40,51,28,14,24,14,53,58,21,28,48,52,20,15,28,47,19,60,36,43,58,60,14,35,27,18,38,37,36,37,57,17,38,37,60,30,35,33,33,38,35,35,58,21,44,20,44,34,42,23,44,43,35,41,32,49,48,49,8,28,36,7,29,38.88888889,20,48,39,47,45,19,58,40,53,39,25,38,27,42,43,51,45,58,35,47,45,13,26,16,3,29,24,21,42,17,22,29,27,25.55555556],[45,32,6,15,18,38,2,16,39,24,47,48,22,21,40,0,18,23,43,23,28,25,26,3,36,25,21,22,41,9,32,23.4519828996171,21,36,24,11,2,36,52,8,27,3,30,9,23.4519828996171,19,21,18,36,1,40,6,30,36,26,11,26,15,23.4519828996171,8,37,43,20,24.9167,33,9,16.25,47,30,33,11,10,42,16,49,15,40,43,28,22,33,23.4519828996171,35.75,0,31,28,48,47,20,22,30,35,15,18,12,49,20,23,37,17,28,1,29,11,21,2,25,44,3,47,35,16,32.5,1,18,4,33,24,36,10,39,40,21,45,36,48,26,5,51,48,25,16,2,10,3,13,10,12,48,3,6,34,14,15,23.4519828996171,20,23,13,39,19,3,6,41,18.4167,40,26,14,10,34,26,0,12,8,28,52,47,31,31,42,17,39,10.83333333,44,4,31,26,48,11,11,39,15,50,25,44,16,3,33,9,14,12,16,10,14,14.08333333,19,1,37,28,32,32,12,24,19,23,19,33,8.666666667,26,1,18,16,21,36,21,40,30,15,25,15,39,9,30,44,15,33,28.16666667,30,3,13,17,30,10,35,30,18,6,13,18,17,8,15,3,39,17,9,32,0,17,44,36,36,30,23.4519828996171,7,0,28,7,5,45,33,24,6,38,14,42,46,41,8,11,16,18,11],[6,4,2,8.5,2.25,7.5,3.25,4.75,4.75,6.5,6,6.5,5.25,3.5,5.25,7.5,6.5,4.75,7.25,5.25,5,4.25,8.75,7,7,10,5.5,5,6.75,5,6.5,5.69237918215613,5.5,6.75,3.75,7.5,3.75,8.5,6.5,6.25,3.25,6.5,5.5,7,4.25,6.75,3.5,5.69237918215613,4,4.25,6.25,3.5,6.25,5.5,6,6.25,5.5,3.5,3.5,6,5.75,7.5,5.75,8,8.25,6,4.25,7.75,2,4.5,6,5,8.5,3.75,9,6.25,6.75,6.75,6.25,4.75,5.25,6.25,5.25,4.75,4.75,6.75,9.25,6,3.25,4.5,7,4.5,1.5,5.25,8,4.75,4.25,5.5,5.25,4,4.75,3.75,7.25,8,4.75,3,5,10,7.5,7.5,5.5,4.5,5.25,5.69237918215613,2.5,5,5,5,6,4.25,6,8,4.5,7,7,5.5,6.25,5.75,8.75,4,7.5,7,3,8.25,4.5,4.5,7,7.5,8,3.75,3.25,6.75,8,7.25,5.69237918215613,5.25,5,5,9.75,5.75,3,5.75,7.5,6.75,6.75,7.75,5.75,4.5,2.25,6.5,6,5.69237918215613,3.75,7.25,10,8,7.25,5,7,6,4.5,6.5,8,4.5,4.25,4.5,8,5.5,4.25,6.25,4.75,0,4.5,7.5,5.69237918215613,5,5,6.25,6,3,6.75,3,5.25,3.25,3,5.25,6.75,6.25,6.5,6.25,5.75,4.5,5,6,4.5,7,5.25,7,8,6,2.5,5.25,7.5,6.75,6.75,5,3.25,5.5,3.5,8.5,4,5,6.25,5,5,4.75,7.25,5.5,5.69237918215613,5.25,2.25,6.75,6.25,9,5.75,5,6,4.75,7,7,4.25,4.75,6,7,2,4,5,6.5,6.75,6.25,9,5,7,6.5,5,7,5.5,5.25,6.25,7.5,4.75,8.75,5.5,8.75,6.25,6.5,4,6.25,9,4.5,6,4.5],[130,0,8,25,0,0,15,20.4361607142857,20.4361607142857,0,45,55,30,0,0,100,50,15,5,110,1,20.4361607142857,37,138,0,0,40,48,0,5,40,20.4361607142857,20.4361607142857,0,0,0,0,20.4361607142857,120,20.4361607142857,20.4361607142857,20.4361607142857,60,10,20.4361607142857,90,0,20.4361607142857,0,5,180,0,0,0,0,0,95,0,31,23,4,20.4361607142857,5,0,0,0,0,0,20.4361607142857,0,0,20.4361607142857,0,61,0,10,0,6,0,3,20.4361607142857,0,20,20.4361607142857,0,0,60,60,0,345,0,0,0,0,0,0,0,9,0,0,15,0,79,0,4,0,0,0,70,60,0,0,0,0,0,0,90,68,0,0,0,0,0,0,20.4361607142857,60,0,46,0,0,120,0,0,0,0,0,0,0,1,0,0,15,30,30,0,9,1.9,0,0,0,0,0,15,0,20.4361607142857,20.4361607142857,0,0,20.4361607142857,74,0,0,20.4361607142857,67.5,16,41,0,60,20.4361607142857,21,0,0,23.4,0,80,0,20.4361607142857,20.4361607142857,0,23,0,20.4361607142857,20.4361607142857,0,0,20.4361607142857,75,23,0,20.4361607142857,20.4361607142857,20.4361607142857,20.4361607142857,0,0,20.4361607142857,30,6,0,0.1,20.4361607142857,20.4361607142857,0,71,0,16,32.5,0,0,200,20.4361607142857,20.4361607142857,20.4361607142857,20,20.4361607142857,0,0,22.5,0,0,0,20.4361607142857,0,20,20.4361607142857,0,0,100,20.4361607142857,20.4361607142857,20,20.4361607142857,30,7.5,20.4361607142857,7.5,20.4361607142857,0,38,20.4361607142857,20.4361607142857,20.4361607142857,3.3,20,40,0,20,0,7.5,20.4361607142857,43.9,0,0,0,7.5,81.3,20.4361607142857,8,0,24,7.8,8,15,0,64,127,80,20.4361607142857,20.4361607142857,20,0,20],[74.08,33.56,44.63,64.79,56.34,60.33,74.89,59.2,65.17,75.9,59.89,55.45,32.1,53.26,27.1,84,41.48,54.24,42.55,31.91,49.12,45.43,46.52,43.87,56.13,75.39,75.83,65.37,69.22,65.46,48.71,37.65,64.73,41.92,59.66,44.86,70.01,25.36,77.71,36.43,68.85,47.83,45.77,36.47,88.68,43.02,41.19,67.68,51.2,44.1,33.22,70.62,25.13,41.37,52.51,26.13,57.85,62.54,65.32,35.93,44.89,40.33,56.51,36.29,54.85,49.14,48.1,50.56,42.31,42.22,42.86,47.28,52.11,42.43,46.27,69.93,37.02,71.12,77.55,28.63,55.5,62.82,37.23,50.94,46.36,39.87,44.5,44.9,36.56,64.93,49.9,45.11,64.09,48.18,76.51,37.53,50.33,53.36,60.71,52.74,86.86,81.76,45.28,35.17,25.63,66.09,57.02,66.11,28.64,45.67,56.61,60.42,37.56,81.43,59.84,81.93,27.72,53.37,39.08,73.97,49.02,48.54,65.49,50.02,42.7,41.84,67.93,45.68,51.28,52.18,39.62,72.05,48.38,22.7,71.9,37.97,19.81,53.92,51.45,50.24,77.22,52.5,94.03,58.13,84.28,38.41,33.86,55.45,62.07,49.22,60.22,49.93,37.94,74.97,45.9,47.16,71.37,73,63.23,56.74,74.68,65.23,57.03,50.63,30.5,44.71,64.97,49.27,24.79,38.17,41.57,37.5,52.55,44.59,68.92,81.46,56.84,82.43,71.12,41.54,37.47,52.78,61.79,59.77,56.53,69.81,51.11,50.52,66.34,57.08,50.07,60.26,68.5,78.16,24.19,71.2,40.99,39.55,28.28,49.2,61.77,38.04,93.81,40.71,46.19,40.97,28.91,62.37,71.92,72.1,61.28,56.17,40.88,62.5,61.57,48.11,55.26,44.6,54.64,53.48,63.33,41.71,20.58,65.54,31.42,48.78,63.1,54.39,90.29,49.3,48.31,78.52,56.84,51.51,60.85,90.69,53.57,47.56,49.16,53.91,83.01,34.43,48.14,64.88,45.84,74.41,76.94,47.12,42.69,55.37,55.27,47.35,64.9,45,76,57.94,78.94,41.21,27.42,36.57,35.91,46.29,60.09,73.33,45.56,28.54,36.5,54.85,82.76,68.93,23.82,49.36],[1,0,0,1,0,1,0,1,1,0,1,1,0,1,1,0,0,1,1,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,0,0,0,0,0,1,0,0,0,1,0,1,0,0,1,1,1,0,1,1,1,0,0,1,0,0,1,1,1,1,1,1,1,0,1,0,0,1,1,1,1,1,1,0,0,1,1,1,0,1,0,1,1,1,0,0,1,1,0,0,0,1,0,1,0,1,0,0,1,1,1,0,1,1,0,1,1,1,1,0,0,0,0,0,1,0,1,0,0,1,0,1,1,0,1,0,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,0,0,1,0,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,1,1,0,0,0,1,0,1,1,1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,1,1,1,0,0,0,1,1,0,1,1,1,0,0,1,0,1,0,1,0,0,1,0,0,0,1,0,1,0,0,0,0,1,1,1,0,1,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,1,1],[14.3393288923853,38.6832710473023,49.3498342543061,22.9787781464139,45.8481275657445,20.8162758249999,46.4585394014924,31.6728672646189,25.5044946694741,34.1387367691459,19.2021373543129,17.2996879888203,36.6958853872317,34.5654095268929,26.163142864913,32.0063982779899,33.4907905443129,30.2700217090019,20.1698445046035,31.6624815359643,37.0461804343656,30.7570385450337,19.2093115456748,23.2704015055638,22.5755148183064,25.8978834519384,34.8228089173946,35.4557577403246,29.2543393719879,41.4321992284853,22.5433336273459,28.0428917415537,28.526162552819,23.4607359083043,40.7758169189229,35.954797597862,46.320512869268,26.3227001209825,19.5874719600551,30.852268033385,39.7066281275304,39.0515624507547,31.9323715731961,29.4997897249815,37.9160930274347,22.5258899543769,42.5426645931598,36.5191373036097,29.5329486420615,38.0065303843822,13.0007901196767,45.8279243162879,26.5484250485964,26.3263729872358,27.5628597416947,39.2228363077982,30.6256339706614,35.9346720995579,39.5146773899795,38.9910874239122,25.1765645525682,18.7269124219976,29.3212362929047,23.6406434699581,20.5377179669946,32.0990142429239,34.2141574874774,25.8099259929689,34.6501072646532,37.0877578796383,39.4232220587815,32.9406844213166,17.6656699564999,31.9055925052282,14.8164352785385,28.8965849636263,22.5194147231598,28.3292572194332,33.6231285409049,31.8156007126165,26.1518170016754,27.4326763171465,33.5706157386768,36.0548136905538,36.95031885747,25.6056697707497,10.9659917568473,18.6385872049583,43.4782838767461,18.8790837221234,24.2880804326042,28.7888060809015,48.1759990966495,39.180431770034,33.8504168011112,24.711664009447,40.8907239528037,28.9355593097798,33.9166374168287,34.4853133501494,35.9458706800043,46.3228796250522,19.3666180939308,27.3177996829423,32.0847588827599,48.1193572648836,30.008249421946,13.4067442226992,34.235105553407,15.1973879368956,26.2514910250769,33.4363814348126,27.8999541863189,41.8961779127357,45.1999648623286,42.6783191284307,30.8952598700808,34.0026886048881,25.2356752565335,42.9919172029508,24.2283258304843,27.1210583662517,39.7220304571999,20.34875205182,29.36304715926,19.5852586398087,26.6508561449028,38.760445255183,14.7513454270163,34.0720132408829,17.523713045237,35.1821270923527,48.5113557734145,34.9956606456493,44.3041562913904,42.4307250205083,37.913091993918,27.7817219664059,17.1873054187986,38.7855691972104,46.2525305580345,30.5661952904482,31.1470474682082,33.3913020604721,35.9406885913404,38.3345882644001,30.9323593597284,40.9024321168158,23.0891775653649,30.0434879648425,47.9868408066622,41.1496492661904,19.629185065967,27.3438431514579,21.1030367337382,22.4666043888025,38.5755312659462,42.4426948345509,40.2766797575275,29.6209131720758,41.6058015269068,39.3678606296328,36.1032278132062,20.1970742940229,11.1403553060921,15.2113531639415,23.1213790242826,25.0237479520565,20.4747095952343,28.9887883126041,35.5274762709133,30.7341234150974,16.8756908815121,44.6461992923956,32.8171897123783,38.0563215479889,15.9078657042106,38.468927591012,35.0824611218394,22.4503379670166,33.6361158669597,41.4450999252316,37.534322730715,26.9640961564133,30.8005557689828,34.2791122950626,23.5627878456759,30.124916453675,38.1161741682767,44.4745137822854,35.0195063401361,44.9290163335687,38.5606166232503,44.1102953714754,44.5852226666017,41.9126366339378,21.4281892858797,26.3960006912932,33.0932137434442,33.1948878086005,30.3829908063037,30.6123632203914,38.4786913427722,32.0835144597747,40.6741121429708,22.7433723964761,32.4064401295292,25.0618449430124,36.8389062464026,25.000989933617,44.47315572349,29.2863248301009,20.5518522786634,33.4581871037938,20.7561922036038,28.893241974748,36.6665024688263,35.5088511793925,43.8196271217496,18.4226804140858,44.0605636483819,27.8150761372379,30.6850027085032,31.2503221976939,34.9655976910419,37.6403474929509,23.4252149887733,36.4400016804837,37.3309047978504,38.1982607905717,33.9726430431671,35.9644543216923,22.743635501318,26.9493254157671,36.5387794868459,41.5118613210303,37.4414486593674,32.6254462954403,25.4480392842409,28.7532824872511,40.2597736368915,35.6329165824405,31.7609225069257,33.8845940903985,46.6256514741361,37.7790847642143,42.6447574337769,28.9027817093574,20.896462277194,23.0845894384359,15.4086376319812,36.6201580725516,33.384653066721,39.2842486356974,43.411683139855,27.4923433228756,39.5959555794639,34.5588800094983,30.2711592574287,28.9319556176868,38.5531575048816,26.1942959377629,24.4917858439268,31.6838363225038,26.8368458104422,21.8326576527611,31.481028286203,38.1546481970484,30.4719262767978,39.7643214047405,30.2974514396718,33.799619777819],[2.96492952050245,1.83732378890018,1.99011831754361,1.88382582390378,1.74889561938993,1.52554207909173,1.68929030822673,1.36618382450545,1.76098153978407,1.51928082059803,1.77984197769259,1.75094181672413,1.60954204812787,1.60244028159633,1.71023785779503,2.74138686390989,1.52070576001135,1.23472424697259,1.43594951509021,2.34730252029451,1.25017248391663,1.34703891520087,1.63945247635503,3.11889775386149,1.33663025271292,2.51372907919105,1.38839529311362,1.20720044973868,1.83318202999829,1.20674283868836,1.13895698166656,1.22049761856509,1.33586854687817,1.25763394578,1.36061498809792,1.80726698938415,1.55049908728251,2.32517399983543,3.00475977396522,1.74150160845595,1.64178017790031,1.71842949333077,1.4138258649308,1.80158978695669,1.958636755854,1.90400928079952,1.5880720644352,1.10767475727174,1.65610556519553,1.91506204036285,3.39267737831224,1.51639703436567,1.60181120578407,1.30981987311027,1.1206750742122,2.13977621454729,1.75882135073826,1.73039848274834,1.43381660805559,1.78263034646399,1.25881992529351,1.42665448641187,1.18142853945221,1.58475030827077,1.51221141580868,1.49985162166919,1.42899928323339,2.01537795628811,2.2141483888936,1.56243699631668,1.51940056735506,1.46206674772897,1.68347798474722,1.8296753518293,1.94820701348845,1.55872191828615,1.40527641822847,1.92339689624178,1.61295838144144,1.62267526083806,1.26183007941876,1.3018678465884,1.58698252135325,1.85784404477089,1.3981208731371,1.22822804112985,2.00447371563089,1.68685508682947,1.76970572557013,6.5055114068724,1.18585884970257,1.46806320829743,2.02682079021236,1.19162657583246,1.93313386753317,1.92079797314944,1.23683964722354,1.1191559116899,1.52281834084797,1.47575667977668,1.93029606912747,1.81195905974501,1.63095015631686,1.99853951353974,1.73209404154765,1.65064699438591,1.27017930854415,2.35928424191149,2.67672653411235,1.67349786480029,1.35240155444252,1.4523091709465,1.33263431777641,1.78968437245179,1.6620127271315,1.68680080636419,2.23591738414288,1.38171118549344,1.28866127952182,1.410831064739,1.32669700493993,1.85792521617904,1.21230763757454,1.5314725525121,1.54509860909067,1.78936159861891,1.4526083407814,1.65088397502613,1.98411911530107,2.17058332000238,2.37518305896143,1.50429660167997,1.76571918700573,2.70376189418242,1.48175314047297,1.57585518945086,2.53469972453274,1.61876495327083,1.74647382203363,1.86399768263834,1.69928833068739,1.35235217306889,2.37612849801979,1.40200088235037,1.73843587287047,1.40775418785334,1.42617885328378,1.14409602812537,2.36716495061671,1.18549884005875,1.6139005675984,1.47107998700796,1.41503179276109,1.73839195039124,1.25292449906017,1.29457498071847,1.28583295631867,1.36243263794762,2.10926662752747,1.49564031389144,1.71734503721401,1.20514109142883,1.71387288980787,1.48337903686353,2.32434337514196,1.62350090251041,1.4855377890293,1.45127561785794,1.67277901088757,1.35143241539538,1.76490588418919,1.65378880986956,1.55613604331764,1.60631183029434,1.8816011742946,1.75110156069684,1.75343866067257,1.57441758120217,1.79667385995388,1.241955623666,1.51643090824292,3.47972954260395,1.15669205474585,1.89510262350103,1.27726599441128,1.87644148442504,1.66653484657285,1.49563918661984,1.22501295635958,1.44945759065714,1.31114634519797,1.46410094527261,1.13431019060149,1.69954120899343,2.23882288782255,1.5136620990641,1.21197638707548,1.16444947937925,1.90517035394126,1.34968030910683,1.4240832416483,1.3789482790165,2.07412043841606,1.61874889875525,1.27656597214834,1.17956766293374,1.92131240271438,1.35450700523442,2.14284850653513,3.74729196900534,1.61553923664645,1.18381800925495,1.28216349357339,1.19238632019203,1.48018832115557,1.24657562389335,1.71937895070392,1.18972263262197,1.34990232234133,1.63742590775553,1.29552987715011,1.22452181872411,2.35986941203389,1.47210863818819,1.71913864109217,1.2933049698644,1.42577622450889,2.17738174450662,1.86902388866152,1.10126313763484,2.10377311543882,1.6336139687352,1.23998571649371,1.95935652189377,1.02115203023019,1.9307210212453,1.17100135848998,1.30592489782076,1.3705372667666,1.63641892458315,1.63693817568894,1.9796465449739,1.53943378730803,1.31240818271046,1.9806654357794,1.79332267634275,1.63947632508143,1.28765846304137,1.42635907575788,1.22520492064648,1.73803727963642,1.32878003752105,1.36580666984466,1.67436250812444,1.62401149345975,1.67435376072188,1.52527599767717,1.72696938354052,2.17424269113816,1.73099236803466,1.51699187615104,2.22036125233004,1.46087491716457,2.09977419483317,1.74743620423237,2.82549385437047,2.21341074618733,1.35602828703163,2.37203995625931,1.17932772042282,1.80926295910453,1.47546651743086],[4.66067110761425,6.31672895269768,-10.3498342543062,-5.97877814641391,-2.84812756574448,16.1837241750001,-18.4585394014924,-0.6728672646189,-10.5044946694741,10.861263230854,-9.20213735431289,18.7003120111797,-1.69588538723176,0.434590473107099,-5.16314286491301,19.9936017220101,6.50920945568706,-20.270021709002,5.83015549539649,5.33751846403568,-24.0461804343656,10.2429614549663,-4.20931154567486,-16.2704015055638,25.4244851816935,24.1021165480615,-2.60060891739458,-8.45575774032463,-19.2543393719879,11.5678007715147,-17.5433336273459,-9.0428917415537,8.47383744718094,-1.46073590830431,15.2241830810771,0.0452024021379797,-4.320512869268,-1.3227001209825,-1.58747196005514,1.14773196661495,9.29337187246953,-33.0515624507547,-14.9323715731961,-0.499789724981503,-31.2493930274347,6.47411004562304,0.457335406840154,16.4808626963903,16.4670513579385,4.99346961561782,-0.00079011967675241,14.1720756837121,-15.5484250485965,-22.3263729872358,-1.56285974169472,9.77716369220181,9.37436602933859,4.06532790044203,-17.5146773899796,-5.99108742391222,-5.17656455256822,-8.7269124219976,-16.3212362929047,-6.6406434699581,-4.53771796699463,8.90098575707611,5.78584251252256,5.19007400703109,9.34989273534675,14.9122421203617,-5.42322205878149,-6.94068442131667,-14.6656699565,18.0944074947717,2.18356472146144,8.10341503637367,-5.51941472315982,-0.329257219433215,5.37687145909512,-9.81560071261651,11.8481829983246,-3.43267631714656,3.42938426132313,3.94518630944619,5.04968114252993,-11.6056697707498,-5.96599175684732,8.36141279504167,-3.47828387674612,-0.879083722123383,3.71191956739577,-5.78880608090153,-15.1759990966496,0.81956822996593,-4.96151680111126,-16.711664009447,15.1092760471962,7.06444069022021,-3.9166374168287,-9.48531335014939,-7.9458706800043,11.6771203749477,-5.36661809393081,7.6822003170577,2.91524111724004,3.88064273511639,-16.0082494219461,-6.40674422269926,-6.23510555340701,-12.1973879368956,1.74850897492308,-10.4363814348126,0.100045813681098,16.1038220872643,-0.199964862328599,-8.67831912843068,6.10474012991919,-9.00268860488808,-13.2356752565335,-14.9919172029508,-12.2283258304843,12.8789416337483,-11.7220304571999,-3.34875205182006,3.63695284073995,-19.5852586398088,-7.76195614490284,-12.760445255183,-4.75134542701635,-10.0720132408829,5.47628695476293,-7.18212709235268,-2.51135577341455,0.0043393543507193,8.69584370860958,-1.43072502050838,3.08690800608198,6.21827803359405,12.8126945812014,10.2144308027896,-11.2525305580345,-15.5661952904482,13.8529525317918,-5.39130206047212,24.0593114086596,-4.33458826440015,14.0676406402716,-1.90243211681583,30.9108224346351,-7.04348796484249,-4.98684080666221,-5.14964926619037,-2.62918506596699,-7.34384315145795,22.8969632662618,17.5333956111974,-5.57553126594619,-8.44269483455093,10.7233202424724,-14.6209131720758,-6.60580152690678,20.6321393703672,5.89677218679381,-12.1970742940229,-9.14035530609216,-1.21135316394153,-7.1213790242826,-10.0237479520565,2.52529040476567,-18.9887883126041,-5.52747627091329,-12.7341234150974,-13.8756908815122,-15.6461992923956,7.18281028762163,12.9436784520111,12.0921342957894,-24.468927591012,-11.0824611218394,-8.45033796701667,19.3638841330402,16.5549000747683,-16.534322730715,1.03590384358672,17.1994442310171,17.7208877049374,-3.56278784567596,-15.1249164536751,-10.1161741682767,2.52548621771458,-16.0195063401362,15.0709836664313,-2.56061662325032,-1.11029537147545,13.4147773333983,18.0873633660622,-7.42818928587969,8.60399930870677,-6.09321374344426,-15.1948878086005,7.6170091936963,6.3876367796086,-2.4786913427722,4.91648554022531,16.3258878570292,-5.74337239647609,5.59355987047074,11.9381550569876,23.1610937535973,4.99901006638295,-9.47315572349003,3.71367516989907,12.4481477213366,4.54181289620621,14.2438077963962,6.10675802525199,21.3334975311737,-14.5088511793925,0.18037287825041,1.57731958591419,-0.0605636483818713,6.18492386276208,11.3149972914968,-8.25032219769392,9.03440230895803,5.35965250704911,11.5747850112267,4.55999831951631,-5.33090479785046,10.8017392094283,14.0273569568328,13.0355456783076,-14.7436355013181,1.05067458423291,-0.53877948684588,-34.5118613210303,-8.44144865936741,6.26344259455971,-5.44803928424097,19.2467175127489,-1.25977363689156,11.3670834175595,13.2390774930742,-14.8845940903985,11.3743485258639,2.2209152357857,10.3552425662231,10.0972182906426,4.10353772280601,14.9154105615641,11.5913623680188,5.37984192744834,9.61534693327897,11.7157513643026,1.58831686014499,30.5076566771243,-4.59595557946394,12.4411199905017,14.7288407425713,-15.9319556176868,-12.5531575048816,-10.194295937763,-21.4917858439268,-2.68383632250381,-2.83684581044225,-0.832657652761138,10.518971713797,-21.1546481970485,-8.47192627679784,-10.7643214047405,-3.29745143967178,-8.24406421781901],[0.0631627617732911,0.024255138511348,0.028457068346195,0.0254984543127119,0.0219765817361427,0.0167217122362519,0.0205041109717349,0.0134106750944883,0.0222813740487751,0.0165847325920418,0.022761205174062,0.0220280367559352,0.0186138845691074,0.0184499872306511,0.0210157742314528,0.0539974209808667,0.0166158569519281,0.0109539893967756,0.0148153087098722,0.0395886318280034,0.011229805507058,0.0130374497527726,0.0193121233608813,0.0698931538553356,0.0128367456428859,0.0454014058639509,0.0138502823871522,0.010471071856694,0.0241459082195005,0.0104631348649453,0.0093206672751031,0.0107030174993819,0.0128221192523939,0.0113642522537951,0.0133015687716844,0.0234680494636365,0.0172733030536114,0.0388457292458407,0.0648711916621579,0.0217911486158421,0.0193670011596201,0.0212175775650403,0.0143623070688106,0.0233208397766513,0.0275638681131272,0.0260477661766598,0.0181206084059245,0.00881570157474951,0.0197064500084563,0.0263510581063912,0.0827022811652633,0.016521832524848,0.0184355041168088,0.0123269465718947,0.0090238483444776,0.032897968019592,0.022226742631688,0.0215141708939807,0.0147713291585963,0.0228325781938416,0.0113856958945904,0.0146241278674929,0.0100287609256898,0.0180448822569245,0.0164307499833599,0.0161632599180283,0.0146722387286149,0.0291840372428232,0.0352245788511398,0.0175403150855198,0.0165873470477528,0.0153591351750497,0.020363257146509,0.0240536195719617,0.027271094462499,0.0174570014311568,0.014189133660208,0.0265809307849433,0.0186929862263845,0.0189188874157649,0.011440213107237,0.0121777250621538,0.0180957525932969,0.024799953821324,0.014045001885231,0.0108390290303528,0.0288690899939819,0.0204450375734147,0.0225026919379407,0.304085175416128,0.010104116865031,0.0154853801868952,0.0295163780120098,0.0102026437736534,0.026850737685164,0.0265091462013426,0.0109915555526774,0.00899939986529569,0.0166620548742083,0.0156481095579576,0.0267719629514326,0.0235900642848471,0.0191123346085083,0.028698410353099,0.0215563535636676,0.0195767580616222,0.0115921083085458,0.03999382083737,0.051480217239993,0.0201225348374475,0.013141462052576,0.0151548109267176,0.0127601079551382,0.0230136367826487,0.0198472825782766,0.0204437218133289,0.0359206236256132,0.0137172454433164,0.0119319087021141,0.0143015263372568,0.0126466605036721,0.0248021209474136,0.0105598571986724,0.0168519746867727,0.0171531847765372,0.0230053364029613,0.0151610552297246,0.0195823796702448,0.0282857595452459,0.0338520743006703,0.0405346602046629,0.0162592051797371,0.0224014244701946,0.0525253855243368,0.0157755342373587,0.0178428808437633,0.0461620830551231,0.0188278161658861,0.0219157593787774,0.0249645130331214,0.0207475353332917,0.0131405023796181,0.0405669361827646,0.0141230643096924,0.0217144939668234,0.0142392140551049,0.0146143784008017,0.00940496792098921,0.0402614495047015,0.0100979828679598,0.0187148310762377,0.0155490885670406,0.0143868182802252,0.0217133967248986,0.0112793004535297,0.0120416716766979,0.0118795904383541,0.013337131725426,0.0319665174731651,0.0160726204182846,0.0211908062933596,0.0104353772110509,0.0211052052970517,0.0158101735517468,0.0388179803903147,0.018938144744849,0.0158562239276971,0.0151332483993086,0.0201052512108136,0.0131226343003344,0.0223807927119658,0.0196513531714396,0.0173991281464255,0.0185392464854419,0.0254382665482662,0.0220320563145368,0.022090905533373,0.017810340579305,0.0231937441024265,0.0110826730027985,0.0165225706755634,0.0870008194817293,0.00961319756268617,0.0258046414160096,0.0117218203853461,0.0252989452005542,0.0199554332348554,0.0160725961902645,0.0107823574916032,0.0150953570102434,0.0123519265412869,0.0154019037420833,0.00924476828647995,0.0207537108502767,0.0360140397026027,0.0164622895506746,0.0105540872439706,0.00974257291651217,0.026079543945058,0.0130886298687225,0.0145714615386543,0.0136624415533463,0.0309100925132631,0.0188274427083704,0.0117089753136183,0.00999719306095054,0.026523347501933,0.0131824117826906,0.03299250568443,0.100894484892291,0.0187528544638904,0.0100693688065897,0.0118118841097616,0.0102156577030909,0.0157422320290819,0.0111652801183922,0.0212410300846719,0.0101700668972941,0.013092936204125,0.0192644084633431,0.0120594424357979,0.0107737134034511,0.0400136625257511,0.0155708415383909,0.0212350929793237,0.0120180568957519,0.0146061279086995,0.0340644606929557,0.0250993264600637,0.00871394004690833,0.0318002229281227,0.0191748175124851,0.0110475436913821,0.0275841303506054,0.0074922657446773,0.0267837518731745,0.00985251626706145,0.0122537429725565,0.0134962794162764,0.0192407213211231,0.019252933781825,0.0281583806400576,0.0170276373109547,0.012375712786512,0.0281873733897141,0.0231073021403956,0.0193126852227258,0.0119133454703486,0.0146180721953666,0.0107857370309482,0.0217045375936705,0.012686404449006,0.0134032716977086,0.0201433335614691,0.0189500587090981,0.0201431230916498,0.0167158796225398,0.0214289868989844,0.0339663124636348,0.0215289410665616,0.0165347972085552,0.0354225353544306,0.0153341048188831,0.0316794440241441,0.0219399190856665,0.0573615788817885,0.0352011126501729,0.013212039425346,0.0404274513715005,0.00999312630376704,0.0235199149407331,0.0156419567200747],[11.8158687359322,11.8130409626396,11.8019569094007,11.8137136616195,11.8182465368586,11.7769729165016,11.7639112581615,11.8194973669192,11.8015408512782,11.800406083695,11.8057300684433,11.7623508362103,11.8191027976802,11.819539906973,11.815222970138,11.7519223388358,11.8126907232334,11.753068140975,11.8140617058716,11.8148344135246,11.7258479762193,11.8025887760461,11.8166861485377,11.7740484213153,11.7145750370531,11.722024996428,11.8184757856143,11.8080304837668,11.7587692682324,11.7979638862241,11.7698739231754,11.8063682190765,11.8079534424814,11.8192260864244,11.7820131353865,11.8195702894094,11.8165380173457,11.8192800489483,11.8191404228073,11.8193556544631,11.8055029886735,11.640043076085,11.7834023572708,11.8195297965659,11.6581644978002,11.8126988126304,11.8195366190625,11.7757444236067,11.7753309930075,11.8154817846723,11.8195706233104,11.7869250119617,11.7801883733162,11.7387293165225,11.8191771580948,11.8037812067751,11.805214674162,11.8168740726915,11.7697618648825,11.81370556246,11.8152429116946,11.8072262631053,11.7765380552372,11.8123995711853,11.81622825825,11.806708520785,11.8141459374696,11.8151405184179,11.8050970608076,11.7833830946858,11.8147954499713,11.8117580749311,11.7844706725152,11.7658955760372,11.8187881364336,11.8088972140809,11.8146365507398,11.8195528449844,11.8148666672657,11.8038836349627,11.7968803327342,11.8176662842051,11.8176584788532,11.8170225580394,11.8154413930057,11.7978137856572,11.8137184460615,11.808171737173,11.8175946858859,11.8193933555289,11.8173484863045,11.8141358915667,11.7816263299631,11.8194622935144,11.8155318814187,11.7736853036302,11.7826653616853,11.8115288497321,11.8170800914115,11.8049709304787,11.8092101121547,11.7972569078746,11.8148825902628,11.8098673584889,11.8181839919563,11.8171183933657,11.7781099560574,11.8127433291529,11.8130260113263,11.7953084163969,11.8190760709832,11.8019029623786,11.8195690049753,11.7771211377582,11.8195641110924,11.8072908619382,11.8133981757771,11.8064454016693,11.7912339626632,11.7831151310807,11.7953698817763,11.7923881036462,11.7973811780284,11.8177496527083,11.8174220440052,11.7567293599938,11.8098009710824,11.7930287926351,11.8158613809436,11.8027972796756,11.8145799720715,11.8111972244845,11.8185407181605,11.8195706202465,11.8072997006443,11.8192379179666,11.8179757562287,11.8132779803464,11.7927468297956,11.8024765914519,11.7989116913464,11.7803102940463,11.7875978553169,11.8148633053477,11.7247355473262,11.8165276195568,11.7874673781084,11.8189873726253,11.659563161434,11.8115676231836,11.8155243749507,11.8152696902892,11.8184509823734,11.8107669306188,11.7346197018852,11.7697933238199,11.8145474593168,11.8080326946287,11.8005931061488,11.7848372499676,11.8124518325026,11.7507000146732,11.8138988441048,11.795416076941,11.8056871514317,11.8193318576945,11.8113416949134,11.8032737333203,11.8185316971088,11.7611011381474,11.8145806507924,11.7931364398127,11.7882500058638,11.7796864521492,11.8111167214143,11.7921916894069,11.7956777133906,11.7218568360291,11.7994817465217,11.8080381483088,11.7585515701402,11.7715543762156,11.7754235185318,11.8193947830876,11.7716907951853,11.7680275969666,11.8175028901333,11.7823975201207,11.8030446560267,11.8185368217131,11.7780195250403,11.7826877479336,11.8185141353734,11.8193696626673,11.7897327971876,11.766352352403,11.810665090008,11.80763089452,11.8134836190639,11.7821658513824,11.8101682168107,11.8129652305153,11.8185585270796,11.8156373074229,11.7764401418603,11.8142505489906,11.8144388465767,11.7964933679144,11.7306818634572,11.8151328887904,11.8049622506439,11.8173464617115,11.7945122496325,11.8162432506071,11.7866193968103,11.8135487614866,11.7451075458234,11.785572655926,11.8195653609599,11.8191656585718,11.8195700307453,11.8133960216744,11.7982618748824,11.8085277344471,11.8062511312881,11.8149283364314,11.7978467266122,11.8161337242015,11.8149163764033,11.8007663562304,11.787083863307,11.7918821992346,11.7844305830997,11.8193894017293,11.8195239347501,11.6225623727056,11.8080767152029,11.813228717885,11.8147667403357,11.7591221522955,11.8193123051095,11.7983276415318,11.7910722248928,11.7837061832057,11.7982998189354,11.8187645875982,11.8021030146447,11.8030877161845,11.8168423692738,11.7836152706468,11.7976261732283,11.8148901224288,11.8046017964259,11.7971879696504,11.8191601234317,11.6669580381047,11.8161409081677,11.7942943140931,11.7836679001089,11.7780871207259,11.793964721914,11.8023592267807,11.7444497117389,11.8183831137653,11.8182570556218,11.8194532114406,11.80124878928,11.7469522713788,11.8076244592303,11.8008723635629,11.8177929641681,11.8085436913126],[0.00187202156388083,0.00121729772299387,0.00386735523772762,0.00114935656134213,0.000223183262405884,0.00542457720883281,0.00871989964417954,7.46995059543913e-06,0.0030799639577399,0.00242257020547469,0.00241686498583828,0.00964499043547055,6.65627576575093e-05,4.33124469078256e-06,0.000700008643831784,0.0288836159910035,0.000871794145523548,0.00550971157996948,0.000621322075268192,0.0014642519193103,0.00795343648236126,0.00168160306041638,0.000426060887199575,0.0256121837328445,0.0101967652605872,0.0346592528988103,0.000115346421600506,0.000915630658517513,0.011256726843141,0.00171230284906191,0.00350014597085356,0.00107089931888558,0.00113138482680134,2.97093238965195e-05,0.00379212895172407,6.02154896219318e-08,0.000399817318863365,8.80969712473318e-05,0.00022387326922783,3.592353068861e-05,0.00208294170490519,0.0289726738534855,0.00394755590972443,7.31300890195033e-06,0.0340864892996188,0.00137827676672962,4.70768341323382e-06,0.00291869724230092,0.00665899820857017,0.000830002120355537,7.34790832036862e-11,0.00410843865978985,0.0055395088028437,0.00754304272232639,2.68773534446883e-05,0.00402653397174943,0.0024466082570106,0.000444721173321375,0.00559024561481909,0.00102780191186698,0.00037382658266348,0.00137362591452245,0.00326429455387983,0.000988262274602715,0.000418797049894936,0.0015843101626504,0.000605827907684756,0.000998848834602287,0.00396175593629356,0.00483921501907128,0.000604089427330085,0.000913895964742192,0.00546514942884999,0.00990144018377632,0.000164562992103099,0.00142194826351268,0.000532642536134301,3.64185130600554e-06,0.000672061939594684,0.0022677785454636,0.00196794453290734,0.000176098377438044,0.000264333243971439,0.000486048484047122,0.000441180836818279,0.00178680831711496,0.00130473991837285,0.00178390094912914,0.000341204298879793,0.000581064925520135,0.000170136522174592,0.000641116048183404,0.00864335476606462,8.376671544465e-06,0.00083580959280536,0.00935518742236161,0.00307204507624597,0.000547649118695594,0.000316541614966073,0.00173998536775472,0.00213705199821829,0.0040403349575134,0.000685105867615195,0.00214981955717472,0.000229157321359038,0.000367284003587581,0.00364131976780475,0.00213304846994069,0.00266389018049412,0.00373382478074067,4.94027044044842e-05,0.00203795967531361,1.56923472828176e-07,0.00748768026107997,9.89240858759531e-07,0.00192155811220684,0.00172478020042104,0.00136864117108604,0.00256394964328424,0.00396177388202479,0.00232298164485611,0.00518017924258525,0.00177486692410487,0.000234131621785855,0.000281273973428668,0.0110709257935767,0.00112777505224894,0.00397242787260193,0.000809850832861847,0.00440566754945492,0.00158132618173744,0.0010378276398726,0.000177032136678279,1.31936642308945e-09,0.00147468861025036,4.53415637408267e-05,0.000578981543461113,0.000905588459827796,0.00450366481729088,0.00328089028789521,0.00328064079215071,0.00391514075991479,0.0101276492365738,0.000505768719437836,0.0157277274257924,0.000329700615093239,0.00356690506062319,4.15398073326311e-05,0.0500133286401674,0.000612219103727344,0.000578798721351904,0.000509510596791132,0.00012259568305036,0.00146528955083382,0.00724388921138661,0.00454174456313938,0.000452934447940828,0.00116941367364508,0.00469736418155308,0.0042500173706847,0.00115580230505676,0.00543237158355265,0.000917122513606929,0.00290784561633599,0.0042036730330453,3.45754084694214e-05,0.000994241723478047,0.00187723479841998,0.000159902190357684,0.00581795379277492,0.000856783116517846,0.00397054913700241,0.00415492837188421,0.00564215523452876,0.00165477407689106,0.00462170623745165,0.00404486083798398,0.013237089134088,0.00357525927363877,0.000969067026708981,0.00767034479241237,0.0342544349320135,0.0032085743826538,3.4940226627997e-05,0.0042515431278715,0.0100140925694331,0.000315813395211154,0.00454806854921918,0.00135034185263337,0.000118857375708204,0.00389143363254587,0.00432136283062914,7.39492059881517e-05,3.19499412454714e-05,0.00835176893925856,0.00666714411931758,0.000712333876327166,0.000880763470765153,0.00122243832010175,0.00371547197283491,0.00104256445793263,0.000686181039682103,0.000242157640204706,0.000566097443935149,0.00382634317496538,0.000402921361411642,0.00104866059606222,0.00231034402553656,0.0226649550418971,0.00373503984442308,0.00209305690435276,0.000169699929790671,0.00224455629960231,0.000257587488445395,0.00394804350004247,0.000509946652739099,0.012084517079769,0.00261667513872735,5.23730806259739e-07,5.96722357235669e-05,5.42713682087073e-08,0.000504340622142376,0.00665684157904088,0.00130968266184389,0.0021665930832305,0.000423536282003455,0.00241336140993186,0.000909108471682596,0.000898719763691245,0.00123903923161414,0.00799342708440955,0.00405590307457261,0.00294039167372391,3.85631753179636e-05,2.64392170754288e-06,0.0403339344990666,0.000857555948127151,0.000590045220052012,0.000492921974289545,0.00887341829988909,3.80407460406197e-05,0.00461313213229345,0.00369886377746952,0.00336621462808851,0.0046240626431482,0.000143021258625473,0.00257859544929317,0.0014898010353879,0.000303584007244324,0.00293643657731475,0.00364888803781799,0.000451074691644957,0.00152455293791576,0.00344847948086735,5.94817492643874e-05,0.0233830053910071,0.000437324633957455,0.00414779243340644,0.00945544782875675,0.00683511754699957,0.0032260266055983,0.00473806490841618,0.00874795935985005,0.000291428763246266,0.000221032700319116,5.35975441291931e-05,0.00501083947462961,0.00727134755957998,0.00377368965316462,0.00141474895628589,0.000321178817974048,0.00131385892596277],[0.408161996616934,0.542051170939633,-0.890058553369151,-0.513378118123683,-0.244118667997101,1.38342756457276,-1.58092841557682,-0.0574218758056619,-0.900501420076572,0.928384855856835,-0.789050034353306,1.60288303325846,-0.145108457229036,0.0371826352683878,-0.442326008658222,1.74245294097826,0.556394498974993,-1.72767539195358,0.497894686967435,0.461664973337757,-2.04981468298035,0.87395965159272,-0.360297997770091,-1.43003949174779,2.16907145245605,2.09103339288616,-0.221983043469161,-0.720533978314351,-1.65216097615176,0.985714153480496,-1.49403837441254,-0.770655302328606,0.722933919900371,-0.12452877955174,1.29914600012143,0.00387734519482275,-0.3694325071689,-0.114361811145845,-0.139151062297963,0.0983650608707012,0.795492785695208,-2.83181641870496,-1.27492993365078,-0.0428674395592486,-2.68613121705918,0.556067393191409,0.0391220798060821,1.40319786685257,1.4097884520237,0.428960590907584,-6.9928450007196e-05,1.21134341470912,-1.33028031707196,-1.90426661986312,-0.133077484803215,0.842738664889708,0.803598302745492,0.348364981176658,-1.49571828487838,-0.513732863791896,-0.44131061167183,-0.745205131994572,-1.39045822365291,-0.568042102768199,-0.387838760095861,0.760663835876435,0.494074488919695,0.446499809267932,0.806881381824674,1.27526887075544,-0.463559699732516,-0.592897408044389,-1.2559881899306,1.55255705534712,0.187666320777798,0.692960503089914,-0.471207732553615,-0.0282879556703642,0.460090625193847,-0.840002555715741,1.01010486943307,-0.292758577032494,0.293357882695181,0.338638897988581,0.431073763157655,-0.989128929880454,-0.513168442762004,0.716112808266693,-0.298210835832987,-0.0893240437730705,0.3162423141704,-0.494531657155501,-1.30580812977339,0.0698277665930855,-0.426325115946763,-1.43572062426808,1.28783385376979,0.601529604259328,-0.334794373651991,-0.810387389012683,-0.682732171627258,1.00169577865196,-0.459311411269204,0.66073111509344,0.249817439860665,0.332210262469605,-1.36487199119041,-0.554263848729334,-0.542671226211562,-1.04447279631562,0.149195799415816,-0.891419522448746,0.0085350044951928,1.38102294535874,-0.01712075828,-0.743253737209648,0.527019842056946,-0.768400590996004,-1.12867484823417,-1.2799744905611,-1.04315029187121,1.10547769001713,-0.998905176526058,-0.286279149609527,0.310964586896923,-1.67957498097458,-0.66298661258843,-1.09238683130803,-0.408567204305882,-0.868581662962424,0.473901117630691,-0.613802886720095,-0.215300056169959,0.000377883131736557,0.742986339069172,-0.122371946753103,0.267918422404643,0.53212505012784,1.09816734290338,0.876839570907876,-0.963871292756491,-1.32822299131011,1.19881229105482,-0.460254976504922,2.06189509364861,-0.370065213899955,1.20125258877702,-0.162023226978165,2.67454723202396,-0.600078205388934,-0.4267210514768,-0.439943392762934,-0.224483325089402,-0.629370700332355,1.95189861332887,1.49524686359491,-0.475441953939923,-0.720464988705487,0.923847457377992,-1.24942202219997,-0.565969050039266,1.75807890868496,0.505199045776478,-1.04215523598668,-0.79027171909238,-0.103666578338544,-0.608486584012887,-0.856165219052897,0.216240877376498,-1.62024929133739,-0.473868898429839,-1.09017183863454,-1.18653956698741,-1.33871635830368,0.616745373138747,1.10945984232276,1.03650141828654,-2.09282752429851,-0.950491377896423,-0.720294779137012,1.65510845791587,1.46861361886864,-1.40831618188731,0.088963651017586,1.46653013592009,1.52147891043486,-0.305058570465674,-1.29249132705235,-0.862157385073401,0.215706926977057,-1.36635704251733,1.28744381350426,-0.218060776771944,-0.0951061811400728,1.15814862361646,1.54595175543393,-0.632999131158023,0.73289624068307,-0.523360390085513,-1.29650621500185,0.650411323229984,0.545184636619193,-0.213430556119126,0.420724934221384,1.39203631367959,-0.489288428509744,0.480553453076677,1.01867337705728,1.99645867915714,0.446884057795564,-0.810628100760616,0.316386332280018,1.06145381297829,0.386968069492218,1.2169923846201,0.520553103123883,1.82784921136735,-1.23614357512071,0.0153903780549609,0.135008126074986,-0.00516491053735176,0.527111771492871,0.978899506627187,-0.70484700097644,0.774063185212495,0.457065362737168,0.9883805398563,0.393284464620535,-0.457653642087029,0.919624154291274,1.20839672879412,1.11570554965296,-1.25670418161202,0.0903146886939187,-0.0458416545196393,-2.96537682083941,-0.719089952771932,0.534203324546993,-0.464950852259804,1.64737185074607,-0.107827661908431,0.977389077786169,1.13188746912292,-1.26957188545364,0.978028350761866,0.190469189240238,0.886362102528179,0.861034216034729,0.350406630211417,1.2711775340684,0.9933805323788,0.458942352998146,0.820561817865317,1.00324049065293,0.13592763770489,2.61242426666714,-0.392873278597721,1.06605469353069,1.27024826976908,-1.36524714480701,-1.07297514106869,-0.87984235063564,-1.83587977631857,-0.231186586152216,-0.243147129030993,-0.0726959289645745,0.90776006234256,-1.80513658277193,-0.733093622899406,-0.917030400066309,-0.282854371248863,-0.704337806234851]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>.rownames<\/th>\n      <th>end_pseq_total<\/th>\n      <th>ref_pcs_total<\/th>\n      <th>ref_bpi_pain_severity<\/th>\n      <th>ref_daily_morphine<\/th>\n      <th>age<\/th>\n      <th>compensation_case<\/th>\n      <th>.fitted<\/th>\n      <th>.se.fit<\/th>\n      <th>.resid<\/th>\n      <th>.hat<\/th>\n      <th>.sigma<\/th>\n      <th>.cooksd<\/th>\n      <th>.std.resid<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"dom":"t","scrollX":true,"fixedColumns":true,"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8,9,10,11,12,13,14]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<p>Session Information:</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1">sessioninfo<span class="op">::</span><span class="kw">session_info</span>()</a></code></pre></div>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 3.6.2 (2019-12-12)
+##  os       macOS Catalina 10.15.1      
+##  system   x86_64, darwin15.6.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_AU.UTF-8                 
+##  ctype    en_AU.UTF-8                 
+##  tz       Australia/Melbourne         
+##  date     2020-05-07                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────
+##  package              * version     date       lib
+##  abind                  1.4-5       2016-07-21 [1]
+##  arm                    1.11-1      2020-04-27 [1]
+##  assertthat             0.2.1       2019-03-21 [1]
+##  backports              1.1.6       2020-04-05 [1]
+##  base64enc              0.1-3       2015-07-28 [1]
+##  BayesFactor            0.9.12-4.2  2018-05-19 [1]
+##  bayesplot              1.7.1       2019-12-01 [1]
+##  bayestestR             0.6.0       2020-04-20 [1]
+##  bbmle                  1.0.23.1    2020-02-03 [1]
+##  bdsmatrix              1.3-4       2020-01-13 [1]
+##  bitops                 1.0-6       2013-08-17 [1]
+##  boot                   1.3-25      2020-04-26 [1]
+##  bridgesampling         1.0-0       2020-02-26 [1]
+##  Brobdingnag            1.2-6       2018-08-13 [1]
+##  broom                * 0.5.6       2020-04-20 [1]
+##  broom.mixed            0.2.5       2020-04-19 [1]
+##  broomExtra           * 4.0.0       2020-04-22 [1]
+##  callr                  3.4.3       2020-03-28 [1]
+##  car                  * 3.0-7       2020-03-11 [1]
+##  carData              * 3.0-3       2019-11-16 [1]
+##  cellranger             1.1.0       2016-07-27 [1]
+##  class                  7.3-17      2020-04-26 [1]
+##  cli                    2.0.2       2020-02-28 [1]
+##  cluster                2.1.0       2019-06-19 [1]
+##  coda                   0.19-3      2019-07-05 [1]
+##  codetools              0.2-16      2018-12-24 [1]
+##  coin                   1.3-1       2019-08-28 [1]
+##  colorspace             1.4-1       2019-03-18 [1]
+##  colourpicker           1.0         2017-09-27 [1]
+##  correlation          * 0.2.0       2020-04-09 [1]
+##  correlationfunnel    * 0.1.0       2019-08-06 [1]
+##  corrplot               0.84        2017-10-16 [1]
+##  corrr                * 0.4.2       2020-03-22 [1]
+##  cowplot              * 1.0.0       2019-07-11 [1]
+##  crayon                 1.3.4       2017-09-16 [1]
+##  crosstalk              1.1.0.1     2020-03-13 [1]
+##  curl                   4.3         2019-12-02 [1]
+##  data.table             1.12.8      2019-12-09 [1]
+##  DBI                    1.1.0       2019-12-15 [1]
+##  dbplyr                 1.4.3       2020-04-19 [1]
+##  DescTools              0.99.34     2020-03-12 [1]
+##  dials                * 0.0.6       2020-04-03 [1]
+##  DiceDesign             1.8-1       2019-07-31 [1]
+##  dichromat              2.0-0       2013-01-24 [1]
+##  digest                 0.6.25      2020-02-23 [1]
+##  dplyr                * 0.8.99.9002 2020-05-01 [1]
+##  DT                     0.13        2020-03-23 [1]
+##  dygraphs               1.1.1.6     2018-07-11 [1]
+##  eeptools             * 1.2.2       2019-03-19 [1]
+##  effectsize             0.3.0       2020-04-11 [1]
+##  ellipsis               0.3.0       2019-09-20 [1]
+##  emmeans                1.4.6       2020-04-19 [1]
+##  EMT                    1.1         2013-01-29 [1]
+##  estimability           1.3         2018-02-11 [1]
+##  evaluate               0.14        2019-05-28 [1]
+##  expm                   0.999-4     2019-03-21 [1]
+##  ez                     4.4-0       2016-11-02 [1]
+##  fansi                  0.4.1       2020-01-08 [1]
+##  farver                 2.0.3       2020-01-16 [1]
+##  fastGHQuad             1.0         2018-09-30 [1]
+##  fastmap                1.0.1       2019-10-08 [1]
+##  fht                    0.0.0.9000  2020-05-07 [1]
+##  forcats              * 0.5.0       2020-03-01 [1]
+##  foreach                1.5.0       2020-03-30 [1]
+##  foreign                0.8-72      2019-08-02 [1]
+##  Formula                1.2-3       2018-05-03 [1]
+##  fs                   * 1.4.1       2020-04-04 [1]
+##  furrr                  0.1.0       2018-05-16 [1]
+##  future                 1.17.0      2020-04-18 [1]
+##  generics               0.0.2       2018-11-29 [1]
+##  GGally               * 1.5.0       2020-03-25 [1]
+##  ggcorrplot             0.1.3       2019-05-19 [1]
+##  ggExtra                0.9         2019-08-27 [1]
+##  ggplot2              * 3.3.0       2020-03-05 [1]
+##  ggrepel                0.8.2       2020-03-08 [1]
+##  ggridges               0.5.2       2020-01-12 [1]
+##  ggsignif               0.6.0       2019-08-08 [1]
+##  ggstatsplot            0.4.0       2020-04-15 [1]
+##  glmnet                 3.0-2       2019-12-11 [1]
+##  globals                0.12.5      2019-12-07 [1]
+##  glue                 * 1.4.0       2020-04-03 [1]
+##  gower                  0.2.1       2019-05-14 [1]
+##  GPfit                  1.0-8       2019-02-08 [1]
+##  gridExtra              2.3         2017-09-09 [1]
+##  groupedstats           0.2.2       2020-04-05 [1]
+##  gtable                 0.3.0       2019-03-25 [1]
+##  gtools                 3.8.2       2020-03-31 [1]
+##  h2o                  * 3.30.0.1    2020-04-09 [1]
+##  haven                  2.2.0       2019-11-08 [1]
+##  hms                    0.5.3       2020-01-08 [1]
+##  htmltools              0.4.0       2019-10-04 [1]
+##  htmlwidgets            1.5.1       2019-10-08 [1]
+##  httpuv                 1.5.2       2019-09-11 [1]
+##  httr                   1.4.1       2019-08-05 [1]
+##  igraph                 1.2.5       2020-03-19 [1]
+##  infer                * 0.5.1       2019-11-19 [1]
+##  inline                 0.3.15      2018-05-18 [1]
+##  insight                0.8.3       2020-04-20 [1]
+##  ipmisc                 2.0.0       2020-04-11 [1]
+##  ipred                  0.9-9       2019-04-28 [1]
+##  iterators              1.0.12      2019-07-26 [1]
+##  janeaustenr            0.1.5       2017-06-10 [1]
+##  janitor              * 2.0.1       2020-04-12 [1]
+##  jcolors                0.0.4       2019-05-22 [1]
+##  jmv                    1.2.5       2020-02-17 [1]
+##  jmvcore                1.2.5       2020-02-05 [1]
+##  jsonlite               1.6.1       2020-02-02 [1]
+##  knitr                  1.28        2020-02-06 [1]
+##  labeling               0.3         2014-08-23 [1]
+##  LaplacesDemon          16.1.4      2020-02-06 [1]
+##  later                  1.0.0       2019-10-04 [1]
+##  lattice                0.20-41     2020-04-02 [1]
+##  lava                   1.6.7       2020-03-05 [1]
+##  lazyeval               0.2.2       2019-03-15 [1]
+##  lhs                    1.0.2       2020-04-13 [1]
+##  libcoin                1.0-5       2019-08-27 [1]
+##  lifecycle              0.2.0       2020-03-06 [1]
+##  lime                 * 0.5.1       2019-11-12 [1]
+##  listenv                0.8.0       2019-12-05 [1]
+##  lme4                   1.1-23      2020-04-07 [1]
+##  lmtest                 0.9-37      2019-04-30 [1]
+##  logspline              2.1.15      2019-11-08 [1]
+##  loo                    2.2.0       2019-12-19 [1]
+##  lubridate            * 1.7.8       2020-04-06 [1]
+##  magrittr             * 1.5         2014-11-22 [1]
+##  mapproj                1.2.7       2020-02-03 [1]
+##  maps                   3.3.0       2018-04-03 [1]
+##  maptools               0.9-9       2019-12-01 [1]
+##  markdown               1.1         2019-08-07 [1]
+##  MASS                   7.3-51.6    2020-04-26 [1]
+##  Matrix                 1.2-18      2019-11-27 [1]
+##  MatrixModels           0.4-1       2015-08-22 [1]
+##  matrixStats            0.56.0      2020-03-13 [1]
+##  mc2d                   0.1-18      2017-03-06 [1]
+##  memor                * 0.2         2019-01-16 [1]
+##  metaBMA                0.6.2       2019-09-16 [1]
+##  metafor                2.4-0       2020-03-19 [1]
+##  metaplus               0.7-11      2018-04-01 [1]
+##  mgcv                   1.8-31      2019-11-09 [1]
+##  mime                   0.9         2020-02-04 [1]
+##  miniUI                 0.1.1.1     2018-05-18 [1]
+##  minqa                  1.2.4       2014-10-09 [1]
+##  mnormt                 1.5-6       2020-02-03 [1]
+##  modelr                 0.1.7       2020-04-30 [1]
+##  modeltools             0.2-23      2020-03-05 [1]
+##  multcomp               1.4-13      2020-04-08 [1]
+##  multcompView           0.1-8       2019-12-19 [1]
+##  munsell                0.5.0       2018-06-12 [1]
+##  mvtnorm                1.1-0       2020-02-24 [1]
+##  naniar               * 0.5.1       2020-04-30 [1]
+##  nlme                   3.1-147     2020-04-13 [1]
+##  nloptr                 1.2.2.1     2020-03-11 [1]
+##  nnet                   7.3-14      2020-04-26 [1]
+##  nortest                1.0-4       2015-07-30 [1]
+##  numDeriv               2016.8-1.1  2019-06-06 [1]
+##  oompaBase              3.2.9       2019-08-24 [1]
+##  openxlsx               4.1.4       2019-12-06 [1]
+##  pairwiseComparisons    0.3.0       2020-04-11 [1]
+##  paletteer              1.1.0       2020-03-10 [1]
+##  palr                   0.2.0       2020-01-30 [1]
+##  pals                   1.6         2019-12-04 [1]
+##  parameters             0.6.1       2020-04-08 [1]
+##  parsnip              * 0.1.0       2020-04-09 [1]
+##  patchwork            * 1.0.0       2019-12-01 [1]
+##  pbapply                1.4-2       2019-08-31 [1]
+##  performance            0.4.5       2020-03-28 [1]
+##  PerformanceAnalytics * 2.0.4       2020-02-06 [1]
+##  pillar                 1.4.3       2019-12-20 [1]
+##  pkgbuild               1.0.7       2020-04-25 [1]
+##  pkgconfig              2.0.3       2019-09-22 [1]
+##  plotly               * 4.9.2.1     2020-04-04 [1]
+##  plyr                   1.8.6       2020-03-03 [1]
+##  prettyunits            1.1.1       2020-01-24 [1]
+##  prismatic              0.2.0       2019-12-01 [1]
+##  pROC                   1.16.2      2020-03-19 [1]
+##  processx               3.4.2       2020-02-09 [1]
+##  prodlim                2019.11.13  2019-11-17 [1]
+##  promises               1.1.0       2019-10-04 [1]
+##  ps                     1.3.2       2020-02-13 [1]
+##  psych                * 1.9.12.31   2020-01-08 [1]
+##  purrr                * 0.3.4       2020-04-17 [1]
+##  quadprog               1.5-8       2019-11-20 [1]
+##  Quandl                 2.10.0      2019-06-12 [1]
+##  quantmod             * 0.4.17      2020-03-31 [1]
+##  R6                     2.4.1       2019-11-12 [1]
+##  RColorBrewer           1.1-2       2014-12-07 [1]
+##  rcompanion             2.3.25      2020-02-09 [1]
+##  Rcpp                   1.0.4       2020-03-17 [1]
+##  RCurl                  1.98-1.2    2020-04-18 [1]
+##  readr                * 1.3.1       2018-12-21 [1]
+##  readxl               * 1.3.1       2019-03-13 [1]
+##  recipes              * 0.1.12      2020-05-01 [1]
+##  rematch2               2.1.2       2020-05-01 [1]
+##  repr                   1.1.0       2020-01-28 [1]
+##  reprex                 0.3.0       2019-05-16 [1]
+##  reshape                0.8.8       2018-10-23 [1]
+##  reshape2               1.4.4       2020-04-09 [1]
+##  rio                    0.5.16      2018-11-26 [1]
+##  rjson                  0.2.20      2018-06-08 [1]
+##  rlang                * 0.4.5.9000  2020-05-01 [1]
+##  rmarkdown            * 2.1         2020-01-20 [1]
+##  rpart                  4.1-15      2019-04-12 [1]
+##  rsample              * 0.0.6       2020-03-31 [1]
+##  rsconnect              0.8.16      2019-12-13 [1]
+##  rstan                  2.19.3      2020-02-11 [1]
+##  rstanarm               2.19.2      2019-10-03 [1]
+##  rstantools             2.0.0       2019-09-15 [1]
+##  rstatix              * 0.5.0       2020-04-28 [1]
+##  rstudioapi             0.11        2020-02-07 [1]
+##  rvest                  0.3.5       2019-11-08 [1]
+##  sandwich               2.5-1       2019-04-06 [1]
+##  scales               * 1.1.0       2019-11-18 [1]
+##  scico                  1.1.0       2018-11-20 [1]
+##  sessioninfo            1.1.1       2018-11-05 [1]
+##  shape                  1.4.4       2018-02-07 [1]
+##  shiny                  1.4.0.2     2020-03-13 [1]
+##  shinyjs                1.1         2020-01-13 [1]
+##  shinystan              2.5.0       2018-05-01 [1]
+##  shinythemes            1.1.2       2018-11-06 [1]
+##  sjlabelled             1.1.4       2020-04-30 [1]
+##  sjmisc                 2.8.4       2020-04-03 [1]
+##  sjstats                0.17.9      2020-02-06 [1]
+##  skimr                * 2.1.1       2020-04-16 [1]
+##  snakecase              0.11.0      2019-05-25 [1]
+##  SnowballC              0.7.0       2020-04-01 [1]
+##  sp                     1.4-1       2020-02-28 [1]
+##  StanHeaders            2.21.0-1    2020-01-19 [1]
+##  statmod                1.4.34      2020-02-17 [1]
+##  statsExpressions       0.4.1       2020-04-22 [1]
+##  stringi                1.4.6       2020-02-17 [1]
+##  stringr              * 1.4.0       2019-02-10 [1]
+##  survival               3.1-12      2020-04-10 [1]
+##  table1               * 1.2         2020-03-23 [1]
+##  TH.data                1.0-10      2019-01-21 [1]
+##  threejs                0.3.3       2020-01-21 [1]
+##  tibble               * 3.0.1       2020-04-20 [1]
+##  tidyBF                 0.2.0       2020-04-11 [1]
+##  tidymodels           * 0.1.0       2020-02-16 [1]
+##  tidyposterior          0.0.2       2018-11-15 [1]
+##  tidypredict            0.4.5       2020-02-10 [1]
+##  tidyquant            * 1.0.0       2020-03-04 [1]
+##  tidyr                * 1.0.2       2020-01-24 [1]
+##  tidyselect             1.0.0       2020-01-27 [1]
+##  tidytext               0.2.4       2020-04-17 [1]
+##  tidyverse            * 1.3.0       2019-11-21 [1]
+##  timeDate               3043.102    2018-02-21 [1]
+##  TMB                    1.7.16      2020-01-15 [1]
+##  tokenizers             0.2.1       2018-03-29 [1]
+##  TTR                  * 0.23-6      2019-12-15 [1]
+##  tune                 * 0.1.0       2020-04-02 [1]
+##  usethis              * 1.6.1       2020-04-29 [1]
+##  utf8                   1.1.4       2018-05-24 [1]
+##  vcd                    1.4-7       2020-04-02 [1]
+##  vctrs                  0.2.99.9011 2020-05-01 [1]
+##  viridisLite            0.3.0       2018-02-01 [1]
+##  visdat                 0.5.3       2019-02-15 [1]
+##  withr                  2.2.0       2020-04-20 [1]
+##  workflows            * 0.1.1       2020-03-17 [1]
+##  WRS2                   1.0-0       2019-06-06 [1]
+##  xfun                   0.13        2020-04-13 [1]
+##  xml2                   1.3.2       2020-04-23 [1]
+##  xtable                 1.8-4       2019-04-21 [1]
+##  xts                  * 0.12-0      2020-01-19 [1]
+##  yaml                   2.2.1       2020-02-01 [1]
+##  yardstick            * 0.0.6       2020-03-17 [1]
+##  zeallot                0.1.0       2018-01-28 [1]
+##  zip                    2.0.4       2019-09-01 [1]
+##  zoo                  * 1.8-7       2020-01-10 [1]
+##  source                          
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  Github (tidyverse/dplyr@761b976)
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  local                           
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  Github (r-lib/rlang@a90b04b)    
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  Github (r-lib/vctrs@489f81b)    
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+## 
+## [1] /Library/Frameworks/R.framework/Versions/3.6/Resources/library</code></pre>
+</div>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiTXVsdGlwbGUgTGluZWFyIFJlZ3Jlc3Npb24iCm91dHB1dDogaHRtbF9kb2N1bWVudAotLS0KCmBgYHtyLCBzZXR1cCwgbWVzc2FnZT1GQUxTRSwgaW5jbHVkZSA9IEZBTFNFfQoKI0xvYWQgcGFja2FnZXMKZmh0OjpsaWJfZmh0KCkKCiNSZWFkIGluIGRhdGEKZGF0YTwtIHJlYWRyOjpyZWFkX3JkcygiY2xlYW5fZGF0YS5yZHMiKQoKYGBgCgoKYGBge3IsIGluY2x1ZGUgPSBGQUxTRX0KCmVmZmljYWN5X3RibDwtIGRhdGEgJT4lIGRwbHlyOjpzZWxlY3QoZW5kX3BzZXFfdG90YWwsIHJlZl9wY3NfdG90YWwsIHJlZl9wc2VxX3RvdGFsLCByZWZfYnBpX3BhaW5fc2V2ZXJpdHksIHJlZl9icGlfc2xlZXAsICByZWZfYnBpX3dhbGtpbmcsIHJlZl9kYXNzX2RlcHJlc3Npb24sIHJlZl9kYXNzX2FueGlldHksIHJlZl9kYXNzX3N0cmVzcywgcmVmX2RhaWx5X21vcnBoaW5lLCB3YWl0X3RpbWUsIGFnZSwgcGFpbl9zb3VyY2UsIHNlcnZpY2VfZnJlcXVlbmN5X3BhaW4sIGNvbXBlbnNhdGlvbl9jYXNlKSAlPiUgZHBseXI6Om11dGF0ZV9pZihpcy5jaGFyYWN0ZXIsIGFzLmZhY3RvcikKCmBgYAoKIyBJbml0aWFsIERhdGEgU3BsaXQKCmBgYHtyfQooZWZmaWNhY3lfc3BsaXQ8LSByc2FtcGxlOjppbml0aWFsX3NwbGl0KGVmZmljYWN5X3RibCwgcHJvcCA9IDMvNCkpCgpgYGAKIyBBbGxvY2F0ZSBUcmFpbmluZyAmIFRlc3RpbmcgRGF0YQpgYGB7cn0KCmVmZmljYWN5X3RyYWluX3RibDwtIGVmZmljYWN5X3NwbGl0ICU+JSByc2FtcGxlOjp0cmFpbmluZygpCgplZmZpY2FjeV90ZXN0X3RibDwtIGVmZmljYWN5X3NwbGl0ICU+JSByc2FtcGxlOjp0ZXN0aW5nKCkKCmBgYAoKIyBEZWZpbmUgUmVjaXBlCgpgYGB7cn0KZWZmaWNhY3lfcmVjaXBlPC0gcmVjaXBlczo6cmVjaXBlKGVuZF9wc2VxX3RvdGFsIH4gLiwgZGF0YSA9IGVmZmljYWN5X3RibCkgJT4lIAogIHJlY2lwZXM6OnN0ZXBfZHVtbXkocmVjaXBlczo6YWxsX25vbWluYWwoKSkgJT4lIAogIHJlY2lwZXM6OnN0ZXBfa25uaW1wdXRlKHJlY2lwZXM6OmFsbF9wcmVkaWN0b3JzKCkpCgojVmlldyByZWNpcGUKc3VtbWFyeShlZmZpY2FjeV9yZWNpcGUpCgpgYGAKCgojIFZpZXcgUHJlLVByb2Nlc3NlZCBEYXRhCgpgYGB7ciwgd2FybmluZyA9IEZBTFNFfQoKZWZmaWNhY3lfcHJlcHJvY2Vzc2VkPC0gZWZmaWNhY3lfcmVjaXBlICU+JSAKICByZWNpcGVzOjpwcmVwKGVmZmljYWN5X3RyYWluX3RibCkgJT4lIAogIHJlY2lwZXM6Omp1aWNlKCkKCiNMb29rCmVmZmljYWN5X3ByZXByb2Nlc3NlZCAlPiUgZHBseXI6OmdsaW1wc2UoKQoKYGBgCgojIFJlbW92ZSBBbGwgUGFpbiBTb3VyY2UgVmFyaWFibGVzIEV4Y2VwdCBPbmUKCmBgYHtyfQoKZWZmaWNhY3lfcmVjaXBlPC0gZWZmaWNhY3lfcmVjaXBlICU+JSAKICByZWNpcGVzOjpzdGVwX3JtKHRpZHlzZWxlY3Q6OmNvbnRhaW5zKCJwYWluX3NvdXJjZSIpLCAtY29udGFpbnMoIndvcmsuc2Nob29sIikpCiAgCmBgYAoKIyBQcmVwYXJlIHRoZSBSZWNpcGUgKEVzdGltYXRlIE1lYW5zKQoKYGBge3J9CmVmZmljYWN5X3ByZXBwZWQ8LSBlZmZpY2FjeV9yZWNpcGUgJT4lIHJlY2lwZXM6OnByZXAoZGF0YSA9IGVmZmljYWN5X3RyYWluX3RibCkKYGBgCgoKIyBBcHBseSB0aGUgUHJlcHJvZXNzaW5nIFN0ZXBzIHRvIHRoZSBNb2RlbAoKCmBgYHtyfQoKdHJhaW5fYmFrZWQ8LSByZWNpcGVzOjpiYWtlKGVmZmljYWN5X3ByZXBwZWQsIG5ld19kYXRhID0gZWZmaWNhY3lfdHJhaW5fdGJsKQp0ZXN0X2Jha2VkPC0gcmVjaXBlczo6YmFrZShlZmZpY2FjeV9wcmVwcGVkLCBuZXdfZGF0YSA9IGVmZmljYWN5X3Rlc3RfdGJsKQoKYGBgCgojIEZpdCB0aGUgTW9kZWwgdG8gKipUcmFpbmluZyoqIERhdGEKCmBgYHtyfQoKbHJfbW9kZWw8LSBwYXJzbmlwOjpsaW5lYXJfcmVnKG1vZGUgPSAicmVncmVzc2lvbiIpICU+JSAKICBwYXJzbmlwOjpzZXRfZW5naW5lKCJsbSIpICU+JSAKICBwYXJzbmlwOjpmaXQoZW5kX3BzZXFfdG90YWwgfiAuLCBkYXRhID0gdHJhaW5fYmFrZWQpCiAgCiAgCmBgYAoKCiMgIENhbGN1bGF0ZSBQcmVkaWN0aW9ucyBVc2luZyAqKlRlc3QqKiBEYXRhCgpgYGB7cn0KIHByZWQ8LSBscl9tb2RlbCAlPiUgCiAgc3RhdHM6OnByZWRpY3QobmV3X2RhdGEgPSB0ZXN0X2Jha2VkKSAKICAKYGBgCgoKIyBDYWxjdWxhdGUgQ0lzIEFyb3VuZCBQcmVkaWN0aW9ucyBVc2luZyBOZXcgRGF0YQoKYGBge3J9CiBjb25mX2ludF9wcmVkPC0gbHJfbW9kZWwgJT4lIAogIHN0YXRzOjpwcmVkaWN0KG5ld19kYXRhID0gdGVzdF9iYWtlZCwgdHlwZSA9ICJjb25mX2ludCIpIAoKYGBgCgoKIyBDb21iaW5lIFRlc3QgRGF0YSBTZXQgd2l0aCBNb2RlbCBQcmVkaWN0aW9ucyAmIENJcwoKYGBge3J9CmxtX3ByZWRpY3Rpb25zPC0gdGVzdF9iYWtlZCAlPiUgCiAgZHBseXI6OmJpbmRfY29scyhwcmVkKSAlPiUgCiAgZHBseXI6OmJpbmRfY29scyhjb25mX2ludF9wcmVkKQoKI1ZpZXcgQWN0dWFsLCBQcmVkaWN0ZWQgJiBDSXMKCmxtX3ByZWRpY3Rpb25zICU+JSBkcGx5cjo6c2VsZWN0KGVuZF9wc2VxX3RvdGFsLCAucHJlZCwgLnByZWRfbG93ZXIsIC5wcmVkX3VwcGVyKQoKYGBgCgojIFBsb3QgQWN0dWFsIFZzLiBQcmVkaWN0ZWQgVmFsdWVzCgpgYGB7cn0KZ2dwbG90KGxtX3ByZWRpY3Rpb25zLCBhZXMoeCA9IC5wcmVkLCB5ID0gZW5kX3BzZXFfdG90YWwpKSArIAogIGdlb21fcG9pbnQoY29sb3IgPSB0aWR5cXVhbnQ6OnBhbGV0dGVfbGlnaHQoKVtbMV1dKSArIGdlb21fc21vb3RoKGNvbG9yID0gdGlkeXF1YW50OjpwYWxldHRlX2xpZ2h0KClbWzNdXSwgc2UgPSBGQUxTRSkgKwogIGdlb21fZXJyb3JiYXIoYWVzKHltaW4gPSAucHJlZF9sb3dlciwgCiAgICAgICAgICAgICAgICAgICAgeW1heCA9IC5wcmVkX3VwcGVyKSx3aWR0aCA9IC4yLCBjb2xvciA9IHRpZHlxdWFudDo6cGFsZXR0ZV9saWdodCgpW1syXV0pICsgdGlkeXF1YW50Ojp0aGVtZV90cSgpICsgeWxhYigiUGFpbiBTZWxmLUVmZmljYWN5IC0gQWN0dWFsIikgKyB4bGFiKCJQYWluIFNlbGYtRWZmaWNhY3kgUHJlZGljdGVkIikKYGBgCgoKIyBBc3Nlc3MgTW9kZWwgUGVyZm9ybWFuY2UKCmBgYHtyfQp5YXJkc3RpY2s6Om1ldHJpY3MobG1fcHJlZGljdGlvbnMsIHRydXRoID0gZW5kX3BzZXFfdG90YWwsIGVzdGltYXRlID0gLnByZWQpCgpgYGAKCiMgQWRkZW5kdW06IExpbmVhciBSZWdyZXNzaW9uIEZvciBJbmZlcmVuY2UKCiMjIEdlbmVyYXRlIERhdGEgCgpgYGB7cn0KaW5mX3RibDwtIGRhdGEgJT4lIGRwbHlyOjpzZWxlY3QoZW5kX3BzZXFfdG90YWwsIHJlZl9wY3NfdG90YWwsIHJlZl9icGlfcGFpbl9zZXZlcml0eSwgcmVmX2RhaWx5X21vcnBoaW5lLCBhZ2UsIGNvbXBlbnNhdGlvbl9jYXNlKSAKCmBgYAoKIyMgQXBwbHkgVHJhbnNmb3JtYXRpb25zIHRvIERhdGEgQXMgTmVlZGVkCgpgYGB7cn0KaW5mX3JlY2lwZTwtIHJlY2lwZXM6OnJlY2lwZShlbmRfcHNlcV90b3RhbCB+IC4sIGRhdGEgPSBpbmZfdGJsKSAlPiUgCiAgcmVjaXBlczo6c3RlcF9tZWFuaW1wdXRlKHJlY2lwZXM6OmFsbF9wcmVkaWN0b3JzKCkpCmBgYAoKIyMgUmV0cml2ZSB0aGUgUHJvY2Vzc2VkIERhdGEKCmBgYHtyfQppbmZfcHJvY2Vzc2VkX3RibDwtIGluZl9yZWNpcGUgJT4lIAogIHJlY2lwZXM6OnByZXAoaW5mX3RibCkgJT4lIAogIHJlY2lwZXM6Omp1aWNlKCkKICAKYGBgCgoKIyMgRml0IHRoZSBNb2RlbCB0byBEYXRhCgpgYGB7cn0KCmluZl9tb2RlbDwtIHBhcnNuaXA6OmxpbmVhcl9yZWcobW9kZSA9ICJyZWdyZXNzaW9uIikgJT4lIAogIHBhcnNuaXA6OnNldF9lbmdpbmUoImxtIikgJT4lIAogIHBhcnNuaXA6OmZpdChlbmRfcHNlcV90b3RhbCB+IC4sIGRhdGEgPSBpbmZfcHJvY2Vzc2VkX3RibCkKICAKICAKYGBgCgoKIyBEZXRvdXI6IEFjY2Vzc2luZyBSZWdyZXNzaW9uIFJlc3VsdHMgZm9yIEluZmVyZW50aWFsIEFuYWx5c2lzCgojIyMjIFZpZXcgTW9kZWwgUGFyYW1ldGVyIEVzdGltYXRlcwoKYGBge3J9CgppbmZfbW9kZWwkZml0ICU+JSBicm9vbUV4dHJhOjp0aWR5X3BhcmFtZXRlcnMoKSAlPiUgZmh0OjpkdF90YWIoKQoKYGBgCgojIyBQbG90IENvZWZmaWNpZW50cwoKYGBge3J9CgpnZ3N0YXRzcGxvdDo6Z2djb2Vmc3RhdHMoaW5mX21vZGVsJGZpdCkKCmBgYAoKIyMjIyBWaWV3IFBlcmZvcm1hbmNlIEluZGljZXMKCmBgYHtyfQoKaW5mX21vZGVsJGZpdCAlPiUgYnJvb21FeHRyYTo6Z2xhbmNlX3BlcmZvcm1hbmNlKCkgJT4lIGZodDo6ZHRfdGFiKCkKCmBgYAoKIyMjIyBHZW5lcmF0ZSBLZXkgU3RhdGlzdGljcyBUbyBBc3Nlc3MgTW9kZWwgQXNzdW1wdGlvbnMKCmBgYHtyfQppbmZfbW9kZWwkZml0ICU+JSBicm9vbUV4dHJhOjphdWdtZW50KCkgJT4lIGZodDo6ZHRfdGFiKCkKCmBgYAoKCgpgYGB7ciwgY2hpbGQ9Il9zZXNzaW9uX2luZm8uUm1kIn0KYGBg</div>
+<html>
+<head>
+<title>Title</title>
+</head>
+<body>
+<p>Copyright &copy; 2020 Timothy Deitz | University Of Melbourne, Inc. All rights reserved.</p>
+</body>
+</html>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("linear_regression.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

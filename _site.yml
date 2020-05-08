@@ -1,0 +1,49 @@
+name: "future_health_today"
+navbar:
+  title: "Future Health Today"
+  right:
+    - icon: fa-github
+      href: https://github.com/PsychlytxTD
+    - icon: fa-linkedin
+      href: https://www.linkedin.com/in/timothy-deitz-52a241193/
+    - icon: fa-tablet-alt
+      href: https://wwwtimothydeitz.com
+    - icon: fa-chart-line
+      href: https://wwwtimothydeitz.com
+  left:
+    - text: "Home"
+      href: index.html
+    - text: Data Management
+      menu:
+      - text: Explore Categorical Variables
+      - text: Plot Simple Counts For One Variable
+        href: plot_simple_counts.html
+      - text: Plot Simple Counts For All Variables Instantaneously
+        href: plot_simple_counts_all.html
+      - text: Plot Crosstabulations For One Pair Of Variables
+        href: plot_crosstabulations.html
+      - text: Plot Crosstabulations For All Categorical Variables Against One
+        href: plot_crosstabulations_all.html
+      - text: Chi-Squared
+        href: chi_squared.html
+      - text: Pre-Modelling Correlation Analysis
+      - text: Get All Correlations With A Target Variable Instantaneously
+        href: plot_correlation_all.html
+      - text: Get All Pairwise Correlations
+        href: get_all_pairwise_correlations.html
+      - text: Plot Correlogram
+        href: plot_correlogram.html
+      - text: Get Correlations By Group
+        href: calc_corr_group.html
+      - text: Modern Multiple Linear Regression Workflow
+        href: linear_regression.html
+output:
+  html_document:
+    self_contained: no
+    toc: true
+    toc_float: true
+    code_download: true
+    include:
+      after_body: footer.html
+    theme: flatly
+    highlight: kate

@@ -1,0 +1,33 @@
+---
+title: "Get All Correlations With A Target Variable Instantaneously"
+output: html_document
+---
+
+```{r, child="_setup.Rmd"}
+```
+
+
+```{r, include = FALSE}
+data<- data %>% dplyr::select(ref_pcs_total, ref_pseq_total, ref_bpi_pain_severity, ref_bpi_pain_interference, ref_bpi_sleep, compensation_case, ref_dass_depression, ref_dass_anxiety, ref_dass_stress, ref_daily_morphine, wait_time, sig_change_self_efficacy, age, service_frequency_pain)
+```
+
+# Table Output
+
+```{r, warning = FALSE}
+
+fht::calc_corr_target(data, target = ref_dass_depression)
+
+```
+
+
+# Plot
+
+```{r, warning = FALSE }
+
+data %>% fht::plot_corr_target(target = ref_dass_depression, fct_reorder = T, 
+           fct_rev = F, lbl_position = "outward")
+
+```
+
+```{r, child="_session_info.Rmd"}
+```

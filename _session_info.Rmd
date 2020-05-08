@@ -1,0 +1,10 @@
+---
+title: "_session_info.Rmd"
+output: html_document
+---
+
+Session Information:
+
+```{r}
+sessioninfo::session_info()
+```

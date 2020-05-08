@@ -1,0 +1,32 @@
+---
+title: "Plot Crosstabulations For All Categorical Variables Against A Target Categorical Variable Simultaneously"
+output: html_document
+---
+
+```{r, child="_setup.Rmd"}
+```
+
+
+```{r, echo = FALSE}
+data<- data %>% dplyr::select(pain_duration, pain_source, referral_source,
+                              sex)
+```
+
+
+# Process Data
+
+```{r}
+(all_cross_tab_tbl<- fht::calc_crosscount_all(data, sex))
+
+```
+
+# Plot
+
+```{r}
+
+fht::plot_crosscount_all(all_cross_tab_tbl, interactive = TRUE)
+
+```
+
+```{r, child="_session_info.Rmd"}
+```

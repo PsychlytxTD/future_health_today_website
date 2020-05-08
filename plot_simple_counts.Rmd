@@ -1,0 +1,21 @@
+---
+title: "Plot Simple Counts For One Variable"
+---
+
+```{r, child="_setup.Rmd"}
+```
+
+# Process Data
+```{r}
+(simple_counts_tbl<- fht::calc_count(data, pain_source))
+
+```
+
+# Plot
+
+```{r}
+fht::plot_count(simple_counts_tbl)
+```
+
+```{r, child="_session_info.Rmd"}
+```

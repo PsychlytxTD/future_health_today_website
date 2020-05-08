@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Get All Pairwise Correlations</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #ffffff;
+    color: #a0a0a0;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
+div.sourceCode
+  { color: #1f1c1b; background-color: #ffffff; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span. { color: #1f1c1b; } /* Normal */
+code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
+code span.an { color: #ca60ca; } /* Annotation */
+code span.at { color: #0057ae; } /* Attribute */
+code span.bn { color: #b08000; } /* BaseN */
+code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #924c9d; } /* Char */
+code span.cn { color: #aa5500; } /* Constant */
+code span.co { color: #898887; } /* Comment */
+code span.cv { color: #0095ff; } /* CommentVar */
+code span.do { color: #607880; } /* Documentation */
+code span.dt { color: #0057ae; } /* DataType */
+code span.dv { color: #b08000; } /* DecVal */
+code span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code span.fl { color: #b08000; } /* Float */
+code span.fu { color: #644a9b; } /* Function */
+code span.im { color: #ff5500; } /* Import */
+code span.in { color: #b08000; } /* Information */
+code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code span.op { color: #1f1c1b; } /* Operator */
+code span.ot { color: #006e28; } /* Other */
+code span.pp { color: #006e28; } /* Preprocessor */
+code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #ff5500; } /* SpecialString */
+code span.st { color: #bf0303; } /* String */
+code span.va { color: #0057ae; } /* Variable */
+code span.vs { color: #bf0303; } /* VerbatimString */
+code span.wa { color: #bf0303; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Future Health Today</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Data Management
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Explore Categorical Variables</li>
+    <li>
+      <a href="plot_simple_counts.html">Plot Simple Counts For One Variable</a>
+    </li>
+    <li>
+      <a href="plot_simple_counts_all.html">Plot Simple Counts For All Variables Instantaneously</a>
+    </li>
+    <li>
+      <a href="plot_crosstabulations.html">Plot Crosstabulations For One Pair Of Variables</a>
+    </li>
+    <li>
+      <a href="plot_crosstabulations_all.html">Plot Crosstabulations For All Categorical Variables Against One</a>
+    </li>
+    <li>
+      <a href="chi_squared.html">Chi-Squared</a>
+    </li>
+    <li class="dropdown-header">Pre-Modelling Correlation Analysis</li>
+    <li>
+      <a href="plot_correlation_all.html">Get All Correlations With A Target Variable Instantaneously</a>
+    </li>
+    <li>
+      <a href="get_all_pairwise_correlations.html">Get All Pairwise Correlations</a>
+    </li>
+    <li>
+      <a href="plot_correlogram.html">Plot Correlogram</a>
+    </li>
+    <li>
+      <a href="calc_corr_group.html">Get Correlations By Group</a>
+    </li>
+    <li>
+      <a href="linear_regression.html">Modern Multiple Linear Regression Workflow</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/PsychlytxTD">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://www.linkedin.com/in/timothy-deitz-52a241193/">
+    <span class="fa fa-linkedin"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://wwwtimothydeitz.com">
+    <span class="fa fa-tablet-alt"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://wwwtimothydeitz.com">
+    <span class="fa fa-chart-line"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Get All Pairwise Correlations</h1>
+
+</div>
+
+
+<p>Load data and packages</p>
+<div id="all-correlations-above-.3" class="section level1">
+<h1>All Correlations Above .3</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">fht<span class="op">::</span><span class="kw">calc_corr_all</span>(data)</a></code></pre></div>
+<pre><code>## 
+## Correlation method: &#39;pearson&#39;
+## Missing treated using: &#39;pairwise.complete.obs&#39;</code></pre>
+<pre><code>## $ref_pcs_total
+## # A tibble: 7 x 2
+##   rowname                   ref_pcs_total
+##   &lt;chr&gt;                             &lt;dbl&gt;
+## 1 ref_dass_depression               0.698
+## 2 ref_dass_stress                   0.694
+## 3 ref_dass_anxiety                  0.601
+## 4 ref_bpi_pain_interference         0.496
+## 5 ref_bpi_sleep                     0.389
+## 6 ref_bpi_pain_severity             0.311
+## 7 ref_pseq_total                   -0.511
+## 
+## $ref_pseq_total
+## # A tibble: 8 x 2
+##   rowname                   ref_pseq_total
+##   &lt;chr&gt;                              &lt;dbl&gt;
+## 1 compensation_case                 -0.368
+## 2 ref_bpi_pain_severity             -0.371
+## 3 ref_bpi_sleep                     -0.408
+## 4 ref_dass_anxiety                  -0.462
+## 5 ref_dass_stress                   -0.505
+## 6 ref_pcs_total                     -0.511
+## 7 ref_dass_depression               -0.539
+## 8 ref_bpi_pain_interference         -0.600
+## 
+## $ref_bpi_pain_severity
+## # A tibble: 7 x 2
+##   rowname                   ref_bpi_pain_severity
+##   &lt;chr&gt;                                     &lt;dbl&gt;
+## 1 ref_bpi_pain_interference                 0.554
+## 2 ref_bpi_sleep                             0.501
+## 3 ref_dass_stress                           0.346
+## 4 ref_dass_depression                       0.319
+## 5 ref_dass_anxiety                          0.311
+## 6 ref_pcs_total                             0.311
+## 7 ref_pseq_total                           -0.371
+## 
+## $ref_bpi_pain_interference
+## # A tibble: 8 x 2
+##   rowname               ref_bpi_pain_interference
+##   &lt;chr&gt;                                     &lt;dbl&gt;
+## 1 ref_bpi_sleep                             0.737
+## 2 ref_dass_depression                       0.620
+## 3 ref_dass_stress                           0.605
+## 4 ref_bpi_pain_severity                     0.554
+## 5 ref_pcs_total                             0.496
+## 6 ref_dass_anxiety                          0.484
+## 7 compensation_case                         0.357
+## 8 ref_pseq_total                           -0.600
+## 
+## $ref_bpi_sleep
+## # A tibble: 8 x 2
+##   rowname                   ref_bpi_sleep
+##   &lt;chr&gt;                             &lt;dbl&gt;
+## 1 ref_bpi_pain_interference         0.737
+## 2 ref_dass_stress                   0.504
+## 3 ref_bpi_pain_severity             0.501
+## 4 ref_dass_depression               0.441
+## 5 ref_dass_anxiety                  0.400
+## 6 ref_pcs_total                     0.389
+## 7 compensation_case                 0.303
+## 8 ref_pseq_total                   -0.408
+## 
+## $compensation_case
+## # A tibble: 6 x 2
+##   rowname                   compensation_case
+##   &lt;chr&gt;                                 &lt;dbl&gt;
+## 1 ref_dass_stress                       0.391
+## 2 ref_bpi_pain_interference             0.357
+## 3 ref_dass_depression                   0.325
+## 4 ref_bpi_sleep                         0.303
+## 5 age                                  -0.308
+## 6 ref_pseq_total                       -0.368
+## 
+## $ref_dass_depression
+## # A tibble: 8 x 2
+##   rowname                   ref_dass_depression
+##   &lt;chr&gt;                                   &lt;dbl&gt;
+## 1 ref_dass_stress                         0.792
+## 2 ref_dass_anxiety                        0.718
+## 3 ref_pcs_total                           0.698
+## 4 ref_bpi_pain_interference               0.620
+## 5 ref_bpi_sleep                           0.441
+## 6 compensation_case                       0.325
+## 7 ref_bpi_pain_severity                   0.319
+## 8 ref_pseq_total                         -0.539
+## 
+## $ref_dass_anxiety
+## # A tibble: 7 x 2
+##   rowname                   ref_dass_anxiety
+##   &lt;chr&gt;                                &lt;dbl&gt;
+## 1 ref_dass_stress                      0.741
+## 2 ref_dass_depression                  0.718
+## 3 ref_pcs_total                        0.601
+## 4 ref_bpi_pain_interference            0.484
+## 5 ref_bpi_sleep                        0.400
+## 6 ref_bpi_pain_severity                0.311
+## 7 ref_pseq_total                      -0.462
+## 
+## $ref_dass_stress
+## # A tibble: 9 x 2
+##   rowname                   ref_dass_stress
+##   &lt;chr&gt;                               &lt;dbl&gt;
+## 1 ref_dass_depression                 0.792
+## 2 ref_dass_anxiety                    0.741
+## 3 ref_pcs_total                       0.694
+## 4 ref_bpi_pain_interference           0.605
+## 5 ref_bpi_sleep                       0.504
+## 6 compensation_case                   0.391
+## 7 ref_bpi_pain_severity               0.346
+## 8 age                                -0.323
+## 9 ref_pseq_total                     -0.505
+## 
+## $ref_daily_morphine
+## # A tibble: 0 x 2
+## # … with 2 variables: rowname &lt;chr&gt;, ref_daily_morphine &lt;dbl&gt;
+## 
+## $wait_time
+## # A tibble: 0 x 2
+## # … with 2 variables: rowname &lt;chr&gt;, wait_time &lt;dbl&gt;
+## 
+## $sig_change_self_efficacy
+## # A tibble: 0 x 2
+## # … with 2 variables: rowname &lt;chr&gt;, sig_change_self_efficacy &lt;dbl&gt;
+## 
+## $age
+## # A tibble: 2 x 2
+##   rowname              age
+##   &lt;chr&gt;              &lt;dbl&gt;
+## 1 compensation_case -0.308
+## 2 ref_dass_stress   -0.323
+## 
+## $service_frequency_pain
+## # A tibble: 0 x 2
+## # … with 2 variables: rowname &lt;chr&gt;, service_frequency_pain &lt;dbl&gt;</code></pre>
+</div>
+<div id="all-statistically-significant-correlations-p-.05" class="section level1">
+<h1>All Statistically Significant Correlations (p &lt; .05)</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">fht<span class="op">::</span><span class="kw">calc_sig_corr_all</span>(data)</a></code></pre></div>
+<pre><code>## # A tibble: 69 x 8
+##    var1          var2           cor statistic        p conf.low conf.high method
+##    &lt;chr&gt;         &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt; 
+##  1 ref_dass_dep… ref_dass_st…  0.79     21.1  7.76e-59  0.742      0.832  Pears…
+##  2 ref_bpi_pain… ref_bpi_sle…  0.74     18.0  3.10e-48  0.678      0.787  Pears…
+##  3 ref_dass_anx… ref_dass_st…  0.74     18.1  3.57e-48  0.682      0.791  Pears…
+##  4 ref_dass_dep… ref_dass_an…  0.72     16.8  1.09e-43  0.654      0.771  Pears…
+##  5 ref_pcs_total ref_dass_de…  0.7      15.9  2.70e-40  0.631      0.755  Pears…
+##  6 ref_pcs_total ref_dass_st…  0.69     15.7  1.07e-39  0.626      0.751  Pears…
+##  7 ref_bpi_pain… ref_dass_de…  0.62     12.9  7.67e-30  0.540      0.689  Pears…
+##  8 ref_bpi_pain… ref_dass_st…  0.6      12.4  2.56e-28  0.523      0.675  Pears…
+##  9 ref_pseq_tot… ref_bpi_pai… -0.6     -12.3  9.68e-28 -0.672     -0.518  Pears…
+## 10 ref_pcs_total ref_dass_an…  0.6      12.2  1.25e-27  0.519      0.673  Pears…
+## 11 ref_bpi_pain… ref_bpi_pai…  0.55     10.9  4.91e-23  0.465      0.632  Pears…
+## 12 ref_pseq_tot… ref_dass_de… -0.54    -10.4  1.61e-21 -0.619     -0.448  Pears…
+## 13 ref_pcs_total ref_pseq_to… -0.51     -9.68 3.65e-19 -0.595     -0.417  Pears…
+## 14 ref_bpi_sleep ref_dass_st…  0.5       9.56 8.20e-19  0.409      0.588  Pears…
+## 15 ref_pseq_tot… ref_dass_st… -0.51     -9.55 9.08e-19 -0.589     -0.410  Pears…
+## 16 ref_bpi_pain… ref_bpi_sle…  0.5       9.45 1.84e-18  0.405      0.585  Pears…
+## 17 ref_pcs_total ref_bpi_pai…  0.5       9.31 4.98e-18  0.400      0.581  Pears…
+## 18 ref_bpi_pain… ref_dass_an…  0.48      9.04 3.38e-17  0.387      0.571  Pears…
+## 19 ref_pseq_tot… ref_dass_an… -0.46     -8.48 1.63e-15 -0.551     -0.362  Pears…
+## 20 ref_bpi_sleep ref_dass_de…  0.44      8.02 3.45e-14  0.339      0.533  Pears…
+## 21 ref_pseq_tot… ref_bpi_sle… -0.41     -7.29 3.46e-12 -0.503     -0.303  Pears…
+## 22 ref_bpi_sleep ref_dass_an…  0.4       7.14 8.75e-12  0.295      0.496  Pears…
+## 23 compensation… ref_dass_st…  0.39      6.92 3.32e-11  0.284      0.488  Pears…
+## 24 ref_pcs_total ref_bpi_sle…  0.39      6.90 3.88e-11  0.283      0.487  Pears…
+## 25 ref_pseq_tot… ref_bpi_pai… -0.37     -6.48 4.47e-10 -0.471     -0.262  Pears…
+## 26 ref_pseq_tot… compensatio… -0.37     -6.45 5.40e-10 -0.468     -0.260  Pears…
+## 27 ref_bpi_pain… compensatio…  0.36      6.28 1.38e- 9  0.249      0.457  Pears…
+## 28 ref_bpi_pain… ref_dass_st…  0.35      5.98 7.11e- 9  0.235      0.448  Pears…
+## 29 ref_dass_str… age          -0.32     -5.59 5.53e- 8 -0.425     -0.212  Pears…
+## 30 compensation… ref_dass_de…  0.32      5.58 5.85e- 8  0.213      0.429  Pears…
+## 31 ref_bpi_pain… ref_dass_de…  0.32      5.45 1.16e- 7  0.206      0.424  Pears…
+## 32 compensation… age          -0.31     -5.33 2.03e- 7 -0.411     -0.196  Pears…
+## 33 ref_bpi_pain… ref_dass_an…  0.31      5.30 2.51e- 7  0.198      0.416  Pears…
+## 34 ref_pcs_total ref_bpi_pai…  0.31      5.29 2.58e- 7  0.197      0.416  Pears…
+## 35 ref_bpi_sleep compensatio…  0.3       5.21 3.70e- 7  0.191      0.407  Pears…
+## 36 ref_pcs_total compensatio…  0.28      4.71 3.97e- 6  0.164      0.386  Pears…
+## 37 ref_pcs_total age          -0.28     -4.71 4.03e- 6 -0.384     -0.163  Pears…
+## 38 ref_pseq_tot… age           0.27      4.57 7.31e- 6  0.155      0.376  Pears…
+## 39 ref_bpi_sleep age          -0.27     -4.53 8.70e- 6 -0.372     -0.151  Pears…
+## 40 ref_bpi_pain… age          -0.26     -4.46 1.20e- 5 -0.368     -0.147  Pears…
+## 41 ref_bpi_sleep service_fre…  0.26      4.37 1.74e- 5  0.142      0.364  Pears…
+## 42 ref_bpi_pain… compensatio…  0.26      4.29 2.48e- 5  0.139      0.364  Pears…
+## 43 ref_bpi_pain… service_fre…  0.24      4.13 4.85e- 5  0.128      0.351  Pears…
+## 44 ref_bpi_pain… sig_change_… -0.28     -4.03 8.21e- 5 -0.408     -0.145  Pears…
+## 45 ref_dass_dep… age          -0.24     -3.95 9.91e- 5 -0.345     -0.119  Pears…
+## 46 ref_dass_anx… sig_change_… -0.28     -3.95 1.11e- 4 -0.403     -0.140  Pears…
+## 47 compensation… ref_dass_an…  0.23      3.89 1.26e- 4  0.116      0.343  Pears…
+## 48 ref_dass_dep… sig_change_… -0.26     -3.62 3.75e- 4 -0.384     -0.117  Pears…
+## 49 ref_dass_str… service_fre…  0.21      3.50 5.37e- 4  0.0921     0.320  Pears…
+## 50 ref_dass_anx… age          -0.21     -3.50 5.53e- 4 -0.320     -0.0917 Pears…
+## 51 age           service_fre… -0.19     -3.14 1.85e- 3 -0.298     -0.0699 Pears…
+## 52 ref_dass_str… sig_change_… -0.22     -3.09 2.31e- 3 -0.351     -0.0800 Pears…
+## 53 ref_daily_mo… sig_change_… -0.24     -3.08 2.42e- 3 -0.379     -0.0862 Pears…
+## 54 ref_bpi_pain… sig_change_… -0.21     -2.89 4.31e- 3 -0.338     -0.0656 Pears…
+## 55 ref_bpi_pain… ref_daily_m…  0.18      2.78 5.88e- 3  0.0539     0.308  Pears…
+## 56 ref_pcs_total sig_change_… -0.19     -2.69 7.90e- 3 -0.326     -0.0514 Pears…
+## 57 ref_dass_dep… service_fre…  0.16      2.65 8.46e- 3  0.0414     0.275  Pears…
+## 58 ref_pseq_tot… service_fre… -0.16     -2.64 8.75e- 3 -0.273     -0.0407 Pears…
+## 59 ref_pcs_total service_fre…  0.16      2.63 8.96e- 3  0.0402     0.273  Pears…
+## 60 compensation… wait_time     0.15      2.57 1.08e- 2  0.0359     0.267  Pears…
+## 61 wait_time     service_fre… -0.15     -2.53 1.19e- 2 -0.264     -0.0337 Pears…
+## 62 compensation… sig_change_… -0.18     -2.53 1.21e- 2 -0.315     -0.0404 Pears…
+## 63 compensation… service_fre…  0.14      2.34 2.02e- 2  0.0222     0.255  Pears…
+## 64 ref_dass_str… ref_daily_m…  0.15      2.27 2.43e- 2  0.0200     0.279  Pears…
+## 65 ref_dass_dep… ref_daily_m…  0.15      2.26 2.48e- 2  0.0195     0.279  Pears…
+## 66 ref_bpi_sleep ref_daily_m…  0.15      2.22 2.72e- 2  0.0170     0.275  Pears…
+## 67 ref_dass_anx… ref_daily_m…  0.15      2.17 3.10e- 2  0.0135     0.272  Pears…
+## 68 ref_pseq_tot… sig_change_…  0.15      2.09 3.82e- 2  0.00832    0.285  Pears…
+## 69 ref_dass_anx… service_fre…  0.12      2.05 4.09e- 2  0.00520    0.240  Pears…</code></pre>
+<p>Session Information:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">sessioninfo<span class="op">::</span><span class="kw">session_info</span>()</a></code></pre></div>
+<pre><code>## ─ Session info ───────────────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 3.6.2 (2019-12-12)
+##  os       macOS Catalina 10.15.1      
+##  system   x86_64, darwin15.6.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_AU.UTF-8                 
+##  ctype    en_AU.UTF-8                 
+##  tz       Australia/Melbourne         
+##  date     2020-05-07                  
+## 
+## ─ Packages ───────────────────────────────────────────────────────────────────
+##  package              * version     date       lib
+##  abind                  1.4-5       2016-07-21 [1]
+##  arm                    1.11-1      2020-04-27 [1]
+##  assertthat             0.2.1       2019-03-21 [1]
+##  backports              1.1.6       2020-04-05 [1]
+##  base64enc              0.1-3       2015-07-28 [1]
+##  bayesplot              1.7.1       2019-12-01 [1]
+##  bayestestR             0.6.0       2020-04-20 [1]
+##  bitops                 1.0-6       2013-08-17 [1]
+##  boot                   1.3-25      2020-04-26 [1]
+##  broom                * 0.5.6       2020-04-20 [1]
+##  broom.mixed            0.2.5       2020-04-19 [1]
+##  broomExtra           * 4.0.0       2020-04-22 [1]
+##  callr                  3.4.3       2020-03-28 [1]
+##  car                  * 3.0-7       2020-03-11 [1]
+##  carData              * 3.0-3       2019-11-16 [1]
+##  cellranger             1.1.0       2016-07-27 [1]
+##  class                  7.3-17      2020-04-26 [1]
+##  cli                    2.0.2       2020-02-28 [1]
+##  coda                   0.19-3      2019-07-05 [1]
+##  codetools              0.2-16      2018-12-24 [1]
+##  colorspace             1.4-1       2019-03-18 [1]
+##  colourpicker           1.0         2017-09-27 [1]
+##  correlation          * 0.2.0       2020-04-09 [1]
+##  correlationfunnel    * 0.1.0       2019-08-06 [1]
+##  corrplot               0.84        2017-10-16 [1]
+##  corrr                * 0.4.2       2020-03-22 [1]
+##  cowplot              * 1.0.0       2019-07-11 [1]
+##  crayon                 1.3.4       2017-09-16 [1]
+##  crosstalk              1.1.0.1     2020-03-13 [1]
+##  curl                   4.3         2019-12-02 [1]
+##  data.table             1.12.8      2019-12-09 [1]
+##  DBI                    1.1.0       2019-12-15 [1]
+##  dbplyr                 1.4.3       2020-04-19 [1]
+##  dials                * 0.0.6       2020-04-03 [1]
+##  DiceDesign             1.8-1       2019-07-31 [1]
+##  digest                 0.6.25      2020-02-23 [1]
+##  dplyr                * 0.8.99.9002 2020-05-01 [1]
+##  DT                     0.13        2020-03-23 [1]
+##  dygraphs               1.1.1.6     2018-07-11 [1]
+##  eeptools             * 1.2.2       2019-03-19 [1]
+##  effectsize             0.3.0       2020-04-11 [1]
+##  ellipsis               0.3.0       2019-09-20 [1]
+##  evaluate               0.14        2019-05-28 [1]
+##  fansi                  0.4.1       2020-01-08 [1]
+##  farver                 2.0.3       2020-01-16 [1]
+##  fastmap                1.0.1       2019-10-08 [1]
+##  fht                    0.0.0.9000  2020-05-07 [1]
+##  forcats              * 0.5.0       2020-03-01 [1]
+##  foreach                1.5.0       2020-03-30 [1]
+##  foreign                0.8-72      2019-08-02 [1]
+##  Formula                1.2-3       2018-05-03 [1]
+##  fs                   * 1.4.1       2020-04-04 [1]
+##  furrr                  0.1.0       2018-05-16 [1]
+##  future                 1.17.0      2020-04-18 [1]
+##  generics               0.0.2       2018-11-29 [1]
+##  GGally               * 1.5.0       2020-03-25 [1]
+##  ggplot2              * 3.3.0       2020-03-05 [1]
+##  ggridges               0.5.2       2020-01-12 [1]
+##  glmnet                 3.0-2       2019-12-11 [1]
+##  globals                0.12.5      2019-12-07 [1]
+##  glue                 * 1.4.0       2020-04-03 [1]
+##  gower                  0.2.1       2019-05-14 [1]
+##  GPfit                  1.0-8       2019-02-08 [1]
+##  gridExtra              2.3         2017-09-09 [1]
+##  gtable                 0.3.0       2019-03-25 [1]
+##  gtools                 3.8.2       2020-03-31 [1]
+##  h2o                  * 3.30.0.1    2020-04-09 [1]
+##  haven                  2.2.0       2019-11-08 [1]
+##  hms                    0.5.3       2020-01-08 [1]
+##  htmltools              0.4.0       2019-10-04 [1]
+##  htmlwidgets            1.5.1       2019-10-08 [1]
+##  httpuv                 1.5.2       2019-09-11 [1]
+##  httr                   1.4.1       2019-08-05 [1]
+##  igraph                 1.2.5       2020-03-19 [1]
+##  infer                * 0.5.1       2019-11-19 [1]
+##  inline                 0.3.15      2018-05-18 [1]
+##  insight                0.8.3       2020-04-20 [1]
+##  ipmisc                 2.0.0       2020-04-11 [1]
+##  ipred                  0.9-9       2019-04-28 [1]
+##  iterators              1.0.12      2019-07-26 [1]
+##  janeaustenr            0.1.5       2017-06-10 [1]
+##  janitor              * 2.0.1       2020-04-12 [1]
+##  jsonlite               1.6.1       2020-02-02 [1]
+##  knitr                  1.28        2020-02-06 [1]
+##  labeling               0.3         2014-08-23 [1]
+##  later                  1.0.0       2019-10-04 [1]
+##  lattice                0.20-41     2020-04-02 [1]
+##  lava                   1.6.7       2020-03-05 [1]
+##  lazyeval               0.2.2       2019-03-15 [1]
+##  lhs                    1.0.2       2020-04-13 [1]
+##  lifecycle              0.2.0       2020-03-06 [1]
+##  lime                 * 0.5.1       2019-11-12 [1]
+##  listenv                0.8.0       2019-12-05 [1]
+##  lme4                   1.1-23      2020-04-07 [1]
+##  lmtest                 0.9-37      2019-04-30 [1]
+##  loo                    2.2.0       2019-12-19 [1]
+##  lubridate            * 1.7.8       2020-04-06 [1]
+##  magrittr             * 1.5         2014-11-22 [1]
+##  maptools               0.9-9       2019-12-01 [1]
+##  markdown               1.1         2019-08-07 [1]
+##  MASS                   7.3-51.6    2020-04-26 [1]
+##  Matrix                 1.2-18      2019-11-27 [1]
+##  matrixStats            0.56.0      2020-03-13 [1]
+##  memor                * 0.2         2019-01-16 [1]
+##  mime                   0.9         2020-02-04 [1]
+##  miniUI                 0.1.1.1     2018-05-18 [1]
+##  minqa                  1.2.4       2014-10-09 [1]
+##  mnormt                 1.5-6       2020-02-03 [1]
+##  modelr                 0.1.7       2020-04-30 [1]
+##  munsell                0.5.0       2018-06-12 [1]
+##  naniar               * 0.5.1       2020-04-30 [1]
+##  nlme                   3.1-147     2020-04-13 [1]
+##  nloptr                 1.2.2.1     2020-03-11 [1]
+##  nnet                   7.3-14      2020-04-26 [1]
+##  openxlsx               4.1.4       2019-12-06 [1]
+##  parameters             0.6.1       2020-04-08 [1]
+##  parsnip              * 0.1.0       2020-04-09 [1]
+##  patchwork            * 1.0.0       2019-12-01 [1]
+##  performance            0.4.5       2020-03-28 [1]
+##  PerformanceAnalytics * 2.0.4       2020-02-06 [1]
+##  pillar                 1.4.3       2019-12-20 [1]
+##  pkgbuild               1.0.7       2020-04-25 [1]
+##  pkgconfig              2.0.3       2019-09-22 [1]
+##  plotly               * 4.9.2.1     2020-04-04 [1]
+##  plyr                   1.8.6       2020-03-03 [1]
+##  prettyunits            1.1.1       2020-01-24 [1]
+##  pROC                   1.16.2      2020-03-19 [1]
+##  processx               3.4.2       2020-02-09 [1]
+##  prodlim                2019.11.13  2019-11-17 [1]
+##  promises               1.1.0       2019-10-04 [1]
+##  ps                     1.3.2       2020-02-13 [1]
+##  psych                * 1.9.12.31   2020-01-08 [1]
+##  purrr                * 0.3.4       2020-04-17 [1]
+##  quadprog               1.5-8       2019-11-20 [1]
+##  Quandl                 2.10.0      2019-06-12 [1]
+##  quantmod             * 0.4.17      2020-03-31 [1]
+##  R6                     2.4.1       2019-11-12 [1]
+##  RColorBrewer           1.1-2       2014-12-07 [1]
+##  Rcpp                   1.0.4       2020-03-17 [1]
+##  RCurl                  1.98-1.2    2020-04-18 [1]
+##  readr                * 1.3.1       2018-12-21 [1]
+##  readxl               * 1.3.1       2019-03-13 [1]
+##  recipes              * 0.1.12      2020-05-01 [1]
+##  repr                   1.1.0       2020-01-28 [1]
+##  reprex                 0.3.0       2019-05-16 [1]
+##  reshape                0.8.8       2018-10-23 [1]
+##  reshape2               1.4.4       2020-04-09 [1]
+##  rio                    0.5.16      2018-11-26 [1]
+##  rlang                * 0.4.5.9000  2020-05-01 [1]
+##  rmarkdown            * 2.1         2020-01-20 [1]
+##  rpart                  4.1-15      2019-04-12 [1]
+##  rsample              * 0.0.6       2020-03-31 [1]
+##  rsconnect              0.8.16      2019-12-13 [1]
+##  rstan                  2.19.3      2020-02-11 [1]
+##  rstanarm               2.19.2      2019-10-03 [1]
+##  rstantools             2.0.0       2019-09-15 [1]
+##  rstatix              * 0.5.0       2020-04-28 [1]
+##  rstudioapi             0.11        2020-02-07 [1]
+##  rvest                  0.3.5       2019-11-08 [1]
+##  scales               * 1.1.0       2019-11-18 [1]
+##  sessioninfo            1.1.1       2018-11-05 [1]
+##  shape                  1.4.4       2018-02-07 [1]
+##  shiny                  1.4.0.2     2020-03-13 [1]
+##  shinyjs                1.1         2020-01-13 [1]
+##  shinystan              2.5.0       2018-05-01 [1]
+##  shinythemes            1.1.2       2018-11-06 [1]
+##  skimr                * 2.1.1       2020-04-16 [1]
+##  snakecase              0.11.0      2019-05-25 [1]
+##  SnowballC              0.7.0       2020-04-01 [1]
+##  sp                     1.4-1       2020-02-28 [1]
+##  StanHeaders            2.21.0-1    2020-01-19 [1]
+##  statmod                1.4.34      2020-02-17 [1]
+##  stringi                1.4.6       2020-02-17 [1]
+##  stringr              * 1.4.0       2019-02-10 [1]
+##  survival               3.1-12      2020-04-10 [1]
+##  table1               * 1.2         2020-03-23 [1]
+##  threejs                0.3.3       2020-01-21 [1]
+##  tibble               * 3.0.1       2020-04-20 [1]
+##  tidymodels           * 0.1.0       2020-02-16 [1]
+##  tidyposterior          0.0.2       2018-11-15 [1]
+##  tidypredict            0.4.5       2020-02-10 [1]
+##  tidyquant            * 1.0.0       2020-03-04 [1]
+##  tidyr                * 1.0.2       2020-01-24 [1]
+##  tidyselect             1.0.0       2020-01-27 [1]
+##  tidytext               0.2.4       2020-04-17 [1]
+##  tidyverse            * 1.3.0       2019-11-21 [1]
+##  timeDate               3043.102    2018-02-21 [1]
+##  TMB                    1.7.16      2020-01-15 [1]
+##  tokenizers             0.2.1       2018-03-29 [1]
+##  TTR                  * 0.23-6      2019-12-15 [1]
+##  tune                 * 0.1.0       2020-04-02 [1]
+##  usethis              * 1.6.1       2020-04-29 [1]
+##  utf8                   1.1.4       2018-05-24 [1]
+##  vcd                    1.4-7       2020-04-02 [1]
+##  vctrs                  0.2.99.9011 2020-05-01 [1]
+##  viridisLite            0.3.0       2018-02-01 [1]
+##  visdat                 0.5.3       2019-02-15 [1]
+##  withr                  2.2.0       2020-04-20 [1]
+##  workflows            * 0.1.1       2020-03-17 [1]
+##  xfun                   0.13        2020-04-13 [1]
+##  xml2                   1.3.2       2020-04-23 [1]
+##  xtable                 1.8-4       2019-04-21 [1]
+##  xts                  * 0.12-0      2020-01-19 [1]
+##  yaml                   2.2.1       2020-02-01 [1]
+##  yardstick            * 0.0.6       2020-03-17 [1]
+##  zeallot                0.1.0       2018-01-28 [1]
+##  zip                    2.0.4       2019-09-01 [1]
+##  zoo                  * 1.8-7       2020-01-10 [1]
+##  source                          
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  Github (tidyverse/dplyr@761b976)
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  local                           
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  Github (r-lib/rlang@a90b04b)    
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  Github (r-lib/vctrs@489f81b)    
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.2)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+##  CRAN (R 3.6.0)                  
+## 
+## [1] /Library/Frameworks/R.framework/Versions/3.6/Resources/library</code></pre>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiR2V0IEFsbCBQYWlyd2lzZSBDb3JyZWxhdGlvbnMiCm91dHB1dDogaHRtbF9kb2N1bWVudAotLS0KCmBgYHtyLCBjaGlsZD0iX3NldHVwLlJtZCJ9CmBgYAoKCmBgYHtyLCBpbmNsdWRlID0gRkFMU0UsIHdhcm5pbmcgPSBGQUxTRX0KZGF0YTwtIGRhdGEgJT4lIGRwbHlyOjpzZWxlY3QocmVmX3Bjc190b3RhbCwgcmVmX3BzZXFfdG90YWwsIHJlZl9icGlfcGFpbl9zZXZlcml0eSwgcmVmX2JwaV9wYWluX2ludGVyZmVyZW5jZSwgcmVmX2JwaV9zbGVlcCwgY29tcGVuc2F0aW9uX2Nhc2UsIHJlZl9kYXNzX2RlcHJlc3Npb24sIHJlZl9kYXNzX2FueGlldHksIHJlZl9kYXNzX3N0cmVzcywgcmVmX2RhaWx5X21vcnBoaW5lLCB3YWl0X3RpbWUsIHNpZ19jaGFuZ2Vfc2VsZl9lZmZpY2FjeSwgYWdlLCBzZXJ2aWNlX2ZyZXF1ZW5jeV9wYWluKQpgYGAKCiMgQWxsIENvcnJlbGF0aW9ucyBBYm92ZSAuMwoKYGBge3IsIHdhcm5pbmcgPSBGQUxTRX0KCmZodDo6Y2FsY19jb3JyX2FsbChkYXRhKQoKYGBgCgoKIyBBbGwgU3RhdGlzdGljYWxseSBTaWduaWZpY2FudCBDb3JyZWxhdGlvbnMgKHAgPCAuMDUpCgpgYGB7ciwgd2FybmluZyA9IEZBTFNFfQoKZmh0OjpjYWxjX3NpZ19jb3JyX2FsbChkYXRhKQoKYGBgCgpgYGB7ciwgY2hpbGQ9Il9zZXNzaW9uX2luZm8uUm1kIn0KYGBg</div>
+<html>
+<head>
+<title>Title</title>
+</head>
+<body>
+<p>Copyright &copy; 2020 Timothy Deitz | University Of Melbourne, Inc. All rights reserved.</p>
+</body>
+</html>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("get_all_pairwise_correlations.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

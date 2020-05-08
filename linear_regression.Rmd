@@ -1,0 +1,224 @@
+---
+title: "Multiple Linear Regression"
+output: html_document
+---
+
+```{r, setup, message=FALSE, include = FALSE}
+
+#Load packages
+fht::lib_fht()
+
+#Read in data
+data<- readr::read_rds("clean_data.rds")
+
+```
+
+
+```{r, include = FALSE}
+
+efficacy_tbl<- data %>% dplyr::select(end_pseq_total, ref_pcs_total, ref_pseq_total, ref_bpi_pain_severity, ref_bpi_sleep,  ref_bpi_walking, ref_dass_depression, ref_dass_anxiety, ref_dass_stress, ref_daily_morphine, wait_time, age, pain_source, service_frequency_pain, compensation_case) %>% dplyr::mutate_if(is.character, as.factor)
+
+```
+
+# Initial Data Split
+
+```{r}
+(efficacy_split<- rsample::initial_split(efficacy_tbl, prop = 3/4))
+
+```
+# Allocate Training & Testing Data
+```{r}
+
+efficacy_train_tbl<- efficacy_split %>% rsample::training()
+
+efficacy_test_tbl<- efficacy_split %>% rsample::testing()
+
+```
+
+# Define Recipe
+
+```{r}
+efficacy_recipe<- recipes::recipe(end_pseq_total ~ ., data = efficacy_tbl) %>% 
+  recipes::step_dummy(recipes::all_nominal()) %>% 
+  recipes::step_knnimpute(recipes::all_predictors())
+
+#View recipe
+summary(efficacy_recipe)
+
+```
+
+
+# View Pre-Processed Data
+
+```{r, warning = FALSE}
+
+efficacy_preprocessed<- efficacy_recipe %>% 
+  recipes::prep(efficacy_train_tbl) %>% 
+  recipes::juice()
+
+#Look
+efficacy_preprocessed %>% dplyr::glimpse()
+
+```
+
+# Remove All Pain Source Variables Except One
+
+```{r}
+
+efficacy_recipe<- efficacy_recipe %>% 
+  recipes::step_rm(tidyselect::contains("pain_source"), -contains("work.school"))
+  
+```
+
+# Prepare the Recipe (Estimate Means)
+
+```{r}
+efficacy_prepped<- efficacy_recipe %>% recipes::prep(data = efficacy_train_tbl)
+```
+
+
+# Apply the Preproessing Steps to the Model
+
+
+```{r}
+
+train_baked<- recipes::bake(efficacy_prepped, new_data = efficacy_train_tbl)
+test_baked<- recipes::bake(efficacy_prepped, new_data = efficacy_test_tbl)
+
+```
+
+# Fit the Model to **Training** Data
+
+```{r}
+
+lr_model<- parsnip::linear_reg(mode = "regression") %>% 
+  parsnip::set_engine("lm") %>% 
+  parsnip::fit(end_pseq_total ~ ., data = train_baked)
+  
+  
+```
+
+
+#  Calculate Predictions Using **Test** Data
+
+```{r}
+ pred<- lr_model %>% 
+  stats::predict(new_data = test_baked) 
+  
+```
+
+
+# Calculate CIs Around Predictions Using New Data
+
+```{r}
+ conf_int_pred<- lr_model %>% 
+  stats::predict(new_data = test_baked, type = "conf_int") 
+
+```
+
+
+# Combine Test Data Set with Model Predictions & CIs
+
+```{r}
+lm_predictions<- test_baked %>% 
+  dplyr::bind_cols(pred) %>% 
+  dplyr::bind_cols(conf_int_pred)
+
+#View Actual, Predicted & CIs
+
+lm_predictions %>% dplyr::select(end_pseq_total, .pred, .pred_lower, .pred_upper)
+
+```
+
+# Plot Actual Vs. Predicted Values
+
+```{r}
+ggplot(lm_predictions, aes(x = .pred, y = end_pseq_total)) + 
+  geom_point(color = tidyquant::palette_light()[[1]]) + geom_smooth(color = tidyquant::palette_light()[[3]], se = FALSE) +
+  geom_errorbar(aes(ymin = .pred_lower, 
+                    ymax = .pred_upper),width = .2, color = tidyquant::palette_light()[[2]]) + tidyquant::theme_tq() + ylab("Pain Self-Efficacy - Actual") + xlab("Pain Self-Efficacy Predicted")
+```
+
+
+# Assess Model Performance
+
+```{r}
+yardstick::metrics(lm_predictions, truth = end_pseq_total, estimate = .pred)
+
+```
+
+# Addendum: Linear Regression For Inference
+
+## Generate Data 
+
+```{r}
+inf_tbl<- data %>% dplyr::select(end_pseq_total, ref_pcs_total, ref_bpi_pain_severity, ref_daily_morphine, age, compensation_case) 
+
+```
+
+## Apply Transformations to Data As Needed
+
+```{r}
+inf_recipe<- recipes::recipe(end_pseq_total ~ ., data = inf_tbl) %>% 
+  recipes::step_meanimpute(recipes::all_predictors())
+```
+
+## Retrive the Processed Data
+
+```{r}
+inf_processed_tbl<- inf_recipe %>% 
+  recipes::prep(inf_tbl) %>% 
+  recipes::juice()
+  
+```
+
+
+## Fit the Model to Data
+
+```{r}
+
+inf_model<- parsnip::linear_reg(mode = "regression") %>% 
+  parsnip::set_engine("lm") %>% 
+  parsnip::fit(end_pseq_total ~ ., data = inf_processed_tbl)
+  
+  
+```
+
+
+# Detour: Accessing Regression Results for Inferential Analysis
+
+#### View Model Parameter Estimates
+
+```{r}
+
+inf_model$fit %>% broomExtra::tidy_parameters() %>% fht::dt_tab()
+
+```
+
+## Plot Coefficients
+
+```{r}
+
+ggstatsplot::ggcoefstats(inf_model$fit)
+
+```
+
+#### View Performance Indices
+
+```{r}
+
+inf_model$fit %>% broomExtra::glance_performance() %>% fht::dt_tab()
+
+```
+
+#### Generate Key Statistics To Assess Model Assumptions
+
+```{r}
+inf_model$fit %>% broomExtra::augment() %>% fht::dt_tab()
+
+```
+
+
+
+```{r, child="_session_info.Rmd"}
+```

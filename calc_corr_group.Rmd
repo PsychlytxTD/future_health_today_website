@@ -1,0 +1,26 @@
+---
+title: "Get Correlations For A Target Variable Within Levels of One or More Categorical Variables"
+output: html_document
+---
+
+```{r, child="_setup.Rmd"}
+```
+
+
+```{r, include = FALSE, warning = FALSE}
+
+data<- data %>% dplyr::select(ref_pcs_total, ref_pseq_total, ref_bpi_pain_severity, ref_bpi_pain_interference, ref_bpi_sleep, compensation_case, ref_dass_depression, ref_dass_anxiety, ref_dass_stress, ref_daily_morphine, wait_time, sig_change_self_efficacy, age, service_frequency_pain, pain_source)
+```
+
+# Correlations By Group
+
+```{r}
+
+fht::calc_corr_group(data, ref_dass_depression, ref_bpi_sleep, pain_source)
+
+```
+
+
+```{r, child="_session_info.Rmd"}
+```
+
