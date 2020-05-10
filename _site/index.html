@@ -11,7 +11,7 @@
 
 
 
-<title>Future Health Today</title>
+<title>Data Analysis Collaboration Space In Support of Future Health Today</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -345,7 +345,7 @@ div.tocify {
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Data Management
+    Exploratory Data Analysis
      
     <span class="caret"></span>
   </a>
@@ -379,8 +379,20 @@ div.tocify {
     <li>
       <a href="calc_corr_group.html">Get Correlations By Group</a>
     </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Machine Learning &amp; Inference
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
     <li>
       <a href="linear_regression.html">Modern Multiple Linear Regression Workflow</a>
+    </li>
+    <li>
+      <a href="classification_example_1.html">Penalized Logistic Regression &amp; Random Forest</a>
     </li>
   </ul>
 </li>
@@ -426,33 +438,36 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Future Health Today</h1>
+<h1 class="title toc-ignore">Data Analysis Collaboration Space In Support of Future Health Today</h1>
 
 </div>
 
 
+<p><img src="unimelb_logo.jpg" /></p>
+<div id="welcome." class="section level1">
+<h1>Welcome.</h1>
 <p>   </p>
-<div id="welcome" class="section level1">
-<h1>Welcome!</h1>
-<p>Test 3</p>
-<p>   </p>
-<div id="this-website-is-intended-for-internal-stakeholders-and-demonstrates-data-management-and-modelling-worklows-using-fht-an-r-package-developed-to-support-the-future-health-today-initiative." class="section level3">
-<h3>This website is intended for internal stakeholders, and demonstrates data management and modelling worklows using <strong>fht</strong>, an <em>R</em> package developed to support the <strong>Future Health Today</strong> initiative.</h3>
+<div id="this-website-is-intended-for-internal-stakeholders-of-the-future-health-today-initiative.-it-presents-modern-data-analysis-workflows-using-r-and-demonstrates-how-to-use-functions-from-fht-an-r-package-developed-in-support-of-future-health-today." class="section level3">
+<h3>This website is intended for internal stakeholders of the <strong>Future Health Today</strong> initiative. It presents modern data analysis workflows using <em>R</em>, and demonstrates how to use functions from <em>fht</em> — an R package developed in support of Future Health Today.</h3>
 <p>   </p>
 </div>
-<div id="download-the-package-from-github-or-learn-more-about-future-health-today-here.." class="section level3">
-<h3>Download the package from <a href="https://github.com/PsychlytxTD">Github</a> or learn more about <a href="https://medicine.unimelb.edu.au/school-structure/general-practice/engagement/primary-care-community/research/future-health-today">Future Health Today here.</a>.</h3>
-<p>           </p>
+<div id="interested-parties-and-collaborators-can-download-the-fht-package-from-github-or-learn-more-about-future-health-today-here.." class="section level3">
+<h3>Interested parties and collaborators can download the <em>fht</em> package from <a href="https://github.com/PsychlytxTD">Github</a> or learn more about <a href="https://medicine.unimelb.edu.au/school-structure/general-practice/engagement/primary-care-community/research/future-health-today">Future Health Today here.</a>.</h3>
+<p>   </p>
+</div>
+<div id="please-note-that-all-datasets-used-on-this-website-are-fictional-and-unrelated-to-any-active-projects." class="section level3">
+<h3>Please note that all datasets used on this website are fictional and unrelated to any active projects.</h3>
+<p>       </p>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiRnV0dXJlIEhlYWx0aCBUb2RheSIKLS0tCiZuYnNwOwombmJzcDsKCiMgV2VsY29tZSEgCgpUZXN0IDMKCiZuYnNwOwombmJzcDsKCiMjIyBUaGlzIHdlYnNpdGUgaXMgaW50ZW5kZWQgZm9yIGludGVybmFsIHN0YWtlaG9sZGVycywgYW5kIGRlbW9uc3RyYXRlcyBkYXRhIG1hbmFnZW1lbnQgYW5kIG1vZGVsbGluZyB3b3JrbG93cyB1c2luZyAqKmZodCoqLCBhbiAqUiogcGFja2FnZSBkZXZlbG9wZWQgdG8gc3VwcG9ydCB0aGUgKipGdXR1cmUgSGVhbHRoIFRvZGF5KiogaW5pdGlhdGl2ZS4KCiZuYnNwOwombmJzcDsKCiMjIyBEb3dubG9hZCB0aGUgcGFja2FnZSBmcm9tIFtHaXRodWJdKGh0dHBzOi8vZ2l0aHViLmNvbS9Qc3ljaGx5dHhURCkgb3IgbGVhcm4gbW9yZSBhYm91dCBbRnV0dXJlIEhlYWx0aCBUb2RheSBoZXJlLl0oaHR0cHM6Ly9tZWRpY2luZS51bmltZWxiLmVkdS5hdS9zY2hvb2wtc3RydWN0dXJlL2dlbmVyYWwtcHJhY3RpY2UvZW5nYWdlbWVudC9wcmltYXJ5LWNhcmUtY29tbXVuaXR5L3Jlc2VhcmNoL2Z1dHVyZS1oZWFsdGgtdG9kYXkpLgoKJm5ic3A7CiZuYnNwOwombmJzcDsKJm5ic3A7CiZuYnNwOwombmJzcDsK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiRGF0YSBBbmFseXNpcyBDb2xsYWJvcmF0aW9uIFNwYWNlIEluIFN1cHBvcnQgb2YgRnV0dXJlIEhlYWx0aCBUb2RheSIKLS0tCgohW10odW5pbWVsYl9sb2dvLmpwZykKCiMgV2VsY29tZS4KCiZuYnNwOwombmJzcDsKCiMjIyBUaGlzIHdlYnNpdGUgaXMgaW50ZW5kZWQgZm9yIGludGVybmFsIHN0YWtlaG9sZGVycyBvZiB0aGUgKipGdXR1cmUgSGVhbHRoIFRvZGF5KiogaW5pdGlhdGl2ZS4gSXQgcHJlc2VudHMgbW9kZXJuIGRhdGEgYW5hbHlzaXMgd29ya2Zsb3dzIHVzaW5nICpSKiwgYW5kIGRlbW9uc3RyYXRlcyBob3cgdG8gdXNlIGZ1bmN0aW9ucyBmcm9tICpmaHQqIOKAlCBhbiBSIHBhY2thZ2UgZGV2ZWxvcGVkIGluIHN1cHBvcnQgb2YgRnV0dXJlIEhlYWx0aCBUb2RheS4gCgombmJzcDsKJm5ic3A7CgoKCiMjIyBJbnRlcmVzdGVkIHBhcnRpZXMgYW5kIGNvbGxhYm9yYXRvcnMgY2FuIGRvd25sb2FkIHRoZSAqZmh0KiBwYWNrYWdlIGZyb20gW0dpdGh1Yl0oaHR0cHM6Ly9naXRodWIuY29tL1BzeWNobHl0eFREKSBvciBsZWFybiBtb3JlIGFib3V0IFtGdXR1cmUgSGVhbHRoIFRvZGF5IGhlcmUuXShodHRwczovL21lZGljaW5lLnVuaW1lbGIuZWR1LmF1L3NjaG9vbC1zdHJ1Y3R1cmUvZ2VuZXJhbC1wcmFjdGljZS9lbmdhZ2VtZW50L3ByaW1hcnktY2FyZS1jb21tdW5pdHkvcmVzZWFyY2gvZnV0dXJlLWhlYWx0aC10b2RheSkuCgombmJzcDsKJm5ic3A7CgojIyMgUGxlYXNlIG5vdGUgdGhhdCBhbGwgZGF0YXNldHMgdXNlZCBvbiB0aGlzIHdlYnNpdGUgYXJlIGZpY3Rpb25hbCBhbmQgdW5yZWxhdGVkIHRvIGFueSBhY3RpdmUgcHJvamVjdHMuIAoKJm5ic3A7CiZuYnNwOwombmJzcDsKJm5ic3A7Cg==</div>
 <html>
 <head>
 <title>Title</title>
 </head>
 <body>
-<p>Copyright &copy; 2020 Timothy Deitz | University Of Melbourne, Inc. All rights reserved.</p>
+<p>Copyright &copy; 2020 Timothy Deitz | University Of Melbourne. All rights reserved.</p>
 </body>
 </html>
 

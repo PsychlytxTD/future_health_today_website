@@ -10,7 +10,7 @@ output: html_document
 data<- data %>% 
 dplyr::select(sig_change_self_efficacy, pain_source) %>%
 tidyr::drop_na() %>% 
-dplyr::mutate(dplyr::across(everything(), as.factor))
+dplyr::mutate_all(as.factor)
 ```
 
 # Generate Statistic

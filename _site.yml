@@ -13,7 +13,7 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: Data Management
+    - text: Exploratory Data Analysis
       menu:
       - text: Explore Categorical Variables
       - text: Plot Simple Counts For One Variable
@@ -35,8 +35,12 @@ navbar:
         href: plot_correlogram.html
       - text: Get Correlations By Group
         href: calc_corr_group.html
+    - text: Machine Learning & Inference
+      menu:
       - text: Modern Multiple Linear Regression Workflow
         href: linear_regression.html
+      - text: Penalized Logistic Regression & Random Forest
+        href: classification_example_1.html
 output:
   html_document:
     self_contained: no

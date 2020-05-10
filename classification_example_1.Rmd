@@ -1,0 +1,329 @@
+---
+title: "Classification Via Penalized Logistic Regression & Random Forest"
+---
+
+```{r, setup, message=FALSE, include = FALSE}
+
+#Load packages
+fht::lib_fht()
+
+#Read in data
+data<- readr::read_rds("clean_data.rds")
+
+```
+
+
+
+# Train a Penalized Logistic Regression Model
+
+```{r, include = FALSE}
+
+efficacy_tbl<- data %>% tibble::as_tibble() %>% 
+  tibble::rowid_to_column("id") %>% #Invent participant ids
+  dplyr::mutate_if(is.character, as.factor) %>% 
+  dplyr::select(-contains("end"), -contains("change"), -ref_bpi_pain_interference, -site_id,
+                -ref_dass_total, -ref_pcs_helplessness, -ref_pcs_magnification,
+                -ref_pcs_rumination, sig_change_self_efficacy) %>% tidyr::drop_na(sig_change_self_efficacy)
+
+```
+
+#Glimpse Data
+
+```{r}
+
+glimpse(efficacy_tbl)
+
+```
+
+
+# Separate 'Other' & Testing Data
+
+```{r}
+
+splits<- rsample::initial_split(efficacy_tbl, strata = sig_change_self_efficacy)
+
+efficacy_other<- rsample::training(splits)
+
+efficacy_test<- rsample::testing(splits)
+
+```
+
+# Separate 'Other' Data Into Training & Validation
+
+```{r}
+
+val_set<- rsample::validation_split(efficacy_tbl, 
+                                    strata = sig_change_self_efficacy, 
+                                    prop = 0.80)
+```
+
+# Specify Penalized Logistic Regression Model
+
+```{r}
+
+lr_mod<- 
+  parsnip::logistic_reg(penalty = tune::tune(), mixture = 1) %>% 
+  parsnip::set_engine("glmnet")
+
+```
+
+# Pre-Process the Data for Modelling
+
+```{r}
+lr_recipe<- 
+  recipes::recipe(sig_change_self_efficacy ~ ., data = efficacy_other) %>% 
+  update_role(id, new_role ="ID") %>% 
+  step_knnimpute(all_predictors()) %>% 
+  step_mutate_at(id, sig_change_self_efficacy, history_of_depression, compensation_case, hearing_sight_impaired,ref_opioid_freq, chronic_condition, active_work_study,
+                 fn = as.factor) %>% 
+  step_normalize(all_numeric()) %>% 
+  step_dummy(all_predictors(), -all_outcomes()) %>% 
+  step_nzv(all_predictors())
+```
+
+
+# View the Pre-Processed Data
+
+```{r}
+ lr_recipe %>% 
+  recipes::prep(efficacy_other) %>% 
+  recipes::juice() %>% dplyr::glimpse()
+
+```
+
+# Create a Workflow
+
+```{r}
+lr_workflow<- workflows::workflow() %>% 
+  add_model(lr_mod) %>% 
+  add_recipe(lr_recipe)
+
+```
+
+# Create a Model Tuning Grid
+
+```{r}
+lr_reg_grid<- tibble::tibble(penalty = 10^seq(-4, -1, length.out = 30))
+
+```
+
+# Train the Model
+
+```{r}
+lr_res<- 
+  lr_workflow %>% 
+  tune_grid(val_set,
+                  grid = lr_reg_grid,
+                  control = tune::control_grid(save_pred = TRUE),
+                  metrics = yardstick::metric_set(roc_auc))
+```
+
+# Plot ROC for Range of Penalty Values
+
+```{r}
+
+lr_plot<-
+  lr_res %>% 
+  tune::collect_metrics() %>% 
+  ggplot(aes(x = penalty, y = mean)) +
+  geom_point() + 
+  geom_line() + 
+  ylab("Area under the ROC Curve") +
+  scale_x_log10(labels = scales::label_number()) + tidyquant::theme_tq()
+
+lr_plot %>% plotly::ggplotly()
+  
+```
+
+# Get Top 15 Models
+
+```{r}
+top_models<- 
+  lr_res %>% 
+  tune::show_best("roc_auc", n = 15) %>% 
+  dplyr::arrange(desc(mean))
+
+top_models %>% fht::dt_tab()
+```
+
+# View ROC for Best Model
+
+```{r}
+lr_best<- 
+  lr_res %>% 
+  tune::collect_metrics() %>% 
+  arrange(desc(mean)) %>% 
+  dplyr::slice(1)
+```
+
+```{r}
+lr_auc<- 
+  lr_res %>% 
+  tune::collect_predictions(parameters = lr_best) %>% 
+  yardstick::roc_curve(sig_change_self_efficacy,
+                       .pred_0) %>% 
+  dplyr::mutate(model = "Logistic Regression")
+
+tune::autoplot(lr_auc)
+```
+
+
+
+
+# Train a Tree-Based Ensemble Model
+
+#### Check available cores on current machine for parallelization
+
+```{r}
+cores<- parallel::detectCores()
+cores
+```
+
+# Specify the Model
+
+```{r}
+rf_mod<- 
+  parsnip::rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %>% 
+  parsnip::set_engine("ranger", num.threads = cores) %>% 
+  parsnip::set_mode("classification")
+```
+
+# Preprocess Data
+
+```{r}
+rf_recipe<- 
+  recipes::recipe(sig_change_self_efficacy ~ ., data = efficacy_other) %>% 
+  update_role(id, new_role ="ID") %>% 
+  step_knnimpute(all_predictors()) %>% 
+  step_mutate_at(id, sig_change_self_efficacy, history_of_depression, compensation_case, hearing_sight_impaired,ref_opioid_freq, chronic_condition, active_work_study,
+                 fn = as.factor)
+```
+
+# Generate Workflow
+
+```{r}
+rf_workflow<- 
+  workflows::workflow() %>% 
+  add_model(rf_mod) %>% 
+  add_recipe(rf_recipe)
+```
+
+# Show Which Parameters Need Tuning
+
+```{r}
+rf_mod %>% tune::parameters()
+```
+
+# Run Models
+
+```{r}
+set.seed(345)
+rf_res<- 
+  rf_workflow %>% 
+  tune::tune_grid(val_set,
+                  grid = 25,
+                  control = tune::control_grid(save_pred = TRUE),
+                  metrics = yardstick::metric_set(roc_auc))
+```
+
+# Five Best Models
+
+```{r}
+rf_res %>% 
+  tune::show_best(metric = "roc_auc")
+```
+
+# Plot Results of Tuning
+
+```{r}
+tune::autoplot(rf_res) %>% plotly::ggplotly()
+```
+
+# Select Best Model
+
+```{r}
+rf_best<- 
+  rf_res %>% 
+  tune::select_best(metric = "roc_auc")
+
+rf_best
+```
+
+# Get Predictions
+
+```{r}
+rf_res %>% 
+  tune::collect_predictions()
+```
+
+# Only Retain Predictions from Best Model
+
+```{r}
+rf_auc<- 
+  rf_res %>% 
+  tune::collect_predictions(parameters = rf_best) %>% 
+  yardstick::roc_curve(sig_change_self_efficacy, .pred_1) %>% 
+  dplyr::mutate(model = "Random Forest")
+```
+
+# Compare ROC Curves For Best Penalized Logistic Regression Model & Random Forrest Model
+
+```{r}
+dplyr::bind_rows(rf_auc, lr_auc) %>% 
+  ggplot(aes(x = 1 - specificity, y = sensitivity, col = model)) +
+  geom_path(lwd = 1.5, alpha = 0.8) + 
+  geom_abline(lty = 3) + 
+  coord_equal() + 
+  scale_color_viridis_d(option = "plasma", end = .6)
+```
+
+# Evaluate Best Model on Training & Validation Sets Combined
+
+```{r}
+last_rf_mod<-
+  parsnip::rand_forest(mtry = 1, min_n =36, trees = 1000) %>% 
+  parsnip::set_engine("ranger", num.threads = cores, importance = "impurity") %>% 
+  parsnip::set_mode("classification")
+  
+```
+
+
+```{r}
+last_rf_workflow<- 
+  rf_workflow %>% 
+  workflows::update_model(last_rf_mod)
+```
+
+```{r}
+set.seed(345)
+last_rf_fit<- 
+  last_rf_workflow %>% 
+  tune::last_fit(splits)
+```
+
+# Get Model Performance on Test Set
+
+```{r}
+last_rf_fit %>% 
+  tune::collect_metrics()
+  
+```
+
+```{r}
+last_rf_fit %>% 
+  purrr::pluck(".workflow", 1) %>% 
+  workflows::pull_workflow_fit() %>% 
+  vip::vip(num_feature = 20)
+```
+
+# Generate ROC Curve
+
+```{r}
+last_rf_fit %>% 
+  tune::collect_predictions() %>% 
+  yardstick::roc_curve(sig_change_self_efficacy, .pred_1) %>% 
+  tune::autoplot()
+```
+
+```{r, child="_session_info.Rmd"}
+``

@@ -15,7 +15,9 @@ data<- data %>% dplyr::select(pain_duration, pain_source, referral_source,
 # Process Data
 
 ```{r}
-(cross_tab_tbl<- fht::calc_crosscount(data, pain_source, sex))
+cross_tab_tbl<- fht::calc_crosscount(data, pain_source, sex)
+
+cross_tab_tbl
 
 ```
 

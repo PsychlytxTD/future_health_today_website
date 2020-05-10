@@ -23,7 +23,9 @@ efficacy_tbl<- data %>% dplyr::select(end_pseq_total, ref_pcs_total, ref_pseq_to
 # Initial Data Split
 
 ```{r}
-(efficacy_split<- rsample::initial_split(efficacy_tbl, prop = 3/4))
+efficacy_split<- rsample::initial_split(efficacy_tbl, prop = 3/4)
+
+efficacy_split
 
 ```
 # Allocate Training & Testing Data
@@ -163,7 +165,7 @@ inf_recipe<- recipes::recipe(end_pseq_total ~ ., data = inf_tbl) %>%
   recipes::step_meanimpute(recipes::all_predictors())
 ```
 
-## Retrive the Processed Data
+## Retrieve the Processed Data
 
 ```{r}
 inf_processed_tbl<- inf_recipe %>% 
@@ -171,7 +173,6 @@ inf_processed_tbl<- inf_recipe %>%
   recipes::juice()
   
 ```
-
 
 ## Fit the Model to Data
 
@@ -211,7 +212,7 @@ inf_model$fit %>% broomExtra::glance_performance() %>% fht::dt_tab()
 
 ```
 
-#### Generate Key Statistics To Assess Model Assumptions
+#### Generate Key Statistics To Assess Model Assumptions Later
 
 ```{r}
 inf_model$fit %>% broomExtra::augment() %>% fht::dt_tab()

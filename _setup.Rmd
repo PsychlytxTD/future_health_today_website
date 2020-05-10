@@ -3,9 +3,9 @@ title: "_setup.Rmd"
 output: html_document
 ---
 
-Load data and packages
-
 ```{r, setup, message=FALSE, include = FALSE}
+
+knitr::opts_chunk$set(warning = FALSE)
 
 #Load packages
 fht::lib_fht()
